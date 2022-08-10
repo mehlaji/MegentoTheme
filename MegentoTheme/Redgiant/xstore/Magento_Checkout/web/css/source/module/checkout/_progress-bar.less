@@ -1,0 +1,186 @@
+// /**
+//  * Copyright © Magento, Inc. All rights reserved.
+//  * See COPYING.txt for license details.
+//  */
+
+//
+//  Variables
+//  _____________________________________________
+
+@checkout-progress-bar__font-size: 18px;
+@checkout-progress-bar__font-weight: @font-weight__light;
+@checkout-progress-bar__margin: @indent__base;
+
+@checkout-progress-bar-item__background-color: @color-gray-middle1;
+@checkout-progress-bar-item__border-radius: 6px;
+@checkout-progress-bar-item__color: @primary__color;
+@checkout-progress-bar-item__margin: @indent__s;
+@checkout-progress-bar-item__width: 185px;
+@checkout-progress-bar-item__active__background-color: @color-orange-red1;
+@checkout-progress-bar-item__complete__color: @link__color;
+
+@checkout-progress-bar-item-element__height: @checkout-progress-bar-item-element__width;
+@checkout-progress-bar-item-element__width: 38px;
+
+@checkout-progress-bar-item-element-inner__background-color: @page__background-color;
+@checkout-progress-bar-item-element-inner__color: @checkout-progress-bar-item__color;
+@checkout-progress-bar-item-element-inner__height: @checkout-progress-bar-item-element-inner__width;
+@checkout-progress-bar-item-element-inner__width: @checkout-progress-bar-item-element__width - (@checkout-progress-bar-item-element-outer-radius__width * 2);
+@checkout-progress-bar-item-element-inner__active__content: @icon-checkmark;
+@checkout-progress-bar-item-element-inner__active__font-size: 28px;
+@checkout-progress-bar-item-element-inner__active__line-height: 1;
+
+@checkout-progress-bar-item-element-outer-radius__width: 6px;
+
+//
+//  Common
+//  _____________________________________________
+
+& when (@media-common = true) {
+
+    //
+    //  Checkout Progress Bar
+    //  ---------------------------------------------
+    .checkout-index-index {
+        .opc-progress-bar {
+            &:extend(.abs-reset-list all);
+            .lib-css(margin, 0 0 @checkout-progress-bar__margin);
+            counter-reset: i;
+            font-size: 0;
+            text-align: center;
+        }
+        .opc-wrapper .step-title, 
+        .opc-block-shipping-information .shipping-information-title, 
+        .opc-block-summary>.title, 
+        .checkout-agreements-items .checkout-agreements-item-title {
+            color: #222;
+            font-size: 14px;
+            text-transform: uppercase;
+            font-weight: 400;
+            border-bottom: 1px solid #e1e1e1;
+        }
+        .opc-block-summary .items-in-cart>.title strong {
+            text-transform: uppercase;
+            font-size: 14px !important;
+            font-weight: 400;
+        }
+        .opc-block-summary .table-totals .mark {
+            color: #555;
+            font-size: 16px;
+        }
+        .opc-block-summary {
+            padding: 24px 28px 28px 28px;
+            background: transparent;
+            border: 1px solid #e1e1e1;
+            .table-totals {
+                td, th {
+                    padding-top: 14px;
+                }
+                .amount .price {
+                    color: #888;
+                }
+                .grand .amount .price {
+                    color: #222;
+                }
+            }
+        }
+        .field-tooltip .field-tooltip-action:before {
+            font-size: 20px;
+            line-height: 36px;
+        }
+        .field-tooltip .field-tooltip-content {
+            background: #fff;
+            border: 1px solid #ededed;
+            &:before {
+                border-right-color: #f4f4f4;
+            }
+        }
+        .methods-shipping {
+            input[type="radio"]:focus {
+                box-shadow: none;
+                outline: none;
+            }
+            table.table-checkout-shipping-method tbody {
+                tr.row {
+                    margin: 0;
+                }
+                td {
+                    border-color: #e1e1e1;
+                }
+            }
+        }
+        .opc-wrapper button.action.primary,
+        .methods-shipping .actions-toolbar button.action.primary {
+            background: #222;
+            border-color: #222;
+            color: #fff;
+            line-height: 14px !important;
+            font-size: 12px !important;
+            padding: 10px 30px !important;
+
+            &:hover {
+                background: #4c4c4c;
+                border-color: #4c4c4c;
+                color: #fff;
+            }
+        }
+    }
+
+    .opc-progress-bar-item {
+        .lib-css(margin, 0 0 @checkout-progress-bar-item__margin);
+        display: inline-block;
+        position: relative;
+        text-align: center;
+        vertical-align: top;
+
+        > span {
+            display: inline-block;
+            width: 100%;
+            word-wrap: break-word;
+            font-weight: 400;
+            font-size: 24px;
+            text-transform: uppercase;
+            color: #b1b1b1;
+            &:after {
+                content: '/';
+                padding: 0 5px;
+            }
+        }
+        &:last-child > span:after {
+            display: none;
+        }
+
+        &._active {
+            > span {
+                .lib-css(color, #222);
+            }
+        }
+
+        &._complete {
+            cursor: pointer;
+
+            > span {
+                .lib-css(color, #222);
+            }
+        }
+    }
+}
+
+//
+//  Desktop
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+    .opc-progress-bar-item {
+        width: auto;
+    }
+    .opc-wrapper {
+        padding-top: 27px;
+    }
+    .checkout-index-index .opc-sidebar {
+        margin-top: 0;
+        .modal-header, .modal-content {
+            border: 0;
+        }
+    }
+}

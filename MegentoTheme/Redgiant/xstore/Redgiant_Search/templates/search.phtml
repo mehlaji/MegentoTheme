@@ -1,0 +1,43 @@
+<?php
+/** @var $block \Magento\Framework\View\Element\Template */
+
+/** @var $helper \Redgiant\Search\Helper\Data */
+$helper = $this->helper('Redgiant\Search\Helper\Data');
+
+if ($helper->isEnabled()):
+    /** @var \Magento\Search\Helper\Data $searchHelper */
+    $searchHelper = $this->helper(\Magento\Search\Helper\Data::class);
+    ?>
+    <?php if ($helper->getConfigGeneral('category/enable')): ?>
+    <div class="search-category">
+        <select id="rgsearch-category">
+            <?php foreach ($helper->getCategoryTree() as $id => $name): ?>
+                <option value="<?php echo $id ?>"><?php echo $name ?></option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+    <?php endif; ?>
+    <script type="text/javascript">
+    require([
+        'jquery'
+    ], function ($) {
+        "use strict";
+
+        var baseUrl = '<?php echo trim($block->getBaseUrl(), '/') . '/' ?>';
+
+        var categorySelect = $('#rgsearch-category'),
+            searchInput = $('#search');
+        if (categorySelect.length) {
+            categorySelect.on('change', function () {
+                searchInput.focus();
+
+                if ($(this).val() === 0) {
+                    $(this).removeAttr('name');
+                } else {
+                    $(this).attr('name', 'cat');
+                }
+            });
+        }
+    });
+    </script>
+<?php endif; ?>

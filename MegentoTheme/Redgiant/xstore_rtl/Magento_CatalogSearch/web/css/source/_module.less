@@ -1,0 +1,219 @@
+// /**
+//  * Copyright © Magento, Inc. All rights reserved.
+//  * See COPYING.txt for license details.
+//  */
+
+//
+//  Variables
+//  _____________________________________________
+
+@autocomplete__background-color: @color-white;
+@autocomplete__border: 1px solid @form-element-input__border-color;
+@autocomplete-item__border: 1px solid @color-gray90;
+@autocomplete-item__hover__color: @color-gray91;
+@autocomplete-item-amount__color: @color-gray60;
+
+//
+//  Common
+//  _____________________________________________
+
+& when (@media-common = true) {
+    .block-search {
+        margin-bottom: 0;
+        position: relative;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+
+        label, .nested {
+            display: none;
+        }
+
+        .block-title {
+            position: absolute;
+            left: 15px;
+            margin: 0;
+            height: 100%;
+            line-height: 90px;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0 10px;
+
+            &:before {
+                display: inline-block;
+                font-family: 'xstore-icons';
+                content: "\e90a";
+            }
+
+            strong {
+                display: none;
+            }
+        }
+
+        .block-content {
+            margin-bottom: 0;
+            height: 100%;
+        }
+
+        .action.search {
+            position: absolute;
+            left: 50px;
+            top: 0;
+            height: 100%;
+            border: 0;
+            background: transparent;
+            font-size: 18px;
+
+            &:focus {
+                outline: none;
+                box-shadow: none;
+            }
+
+            span {
+                display: none;
+            }
+        }
+
+        #search_mini_form {
+            height: 100%;
+        }
+
+        .field.search {
+            height: 100%;
+
+            .control {
+                height: 100%;
+
+                input#search {
+                    height: 100%;
+                    border: 0;
+                    padding: 0 27px;
+                    font-size: 25px;
+
+                    &:focus {
+                        outline: none;
+                        box-shadow: none;
+                    }
+                }
+            }
+        }
+    }
+
+    .search-autocomplete {
+        &:extend(.abs-add-box-sizing all);
+        display: none;
+        overflow: hidden;
+        position: absolute;
+        z-index: 3;
+
+        ul {
+            .lib-list-reset-styles();
+
+            li {
+                .lib-css(border-top, @autocomplete-item__border);
+                cursor: pointer;
+                margin: 0;
+                padding: @indent__xs @indent__s @indent__xs @indent__xl;
+                position: relative;
+                text-align: right;
+                white-space: normal;
+
+                &:not(:empty) {
+                    border-top: 0;
+                    .lib-css(border, @autocomplete__border);
+                    .lib-css(background, @autocomplete__background-color);
+                }
+                
+                &:hover,
+                &.selected {
+                    .lib-css(background, @autocomplete-item__hover__color);
+                }
+
+                .amount {
+                    .lib-css(color, @autocomplete-item-amount__color);
+                    position: absolute;
+                    left: 7px;
+                    top: @indent__xs;
+                }
+            }
+        }
+    }
+    body.catalogsearch-advanced-index .page-title-wrapper {
+        text-align: center;
+        margin-top: 50px;
+        .page-title {
+            font-size: 24px;
+            color: #222;
+            text-transform: uppercase;
+            font-weight: 400;
+        }
+    }
+    .form.search.advanced {
+        .fieldset .legend {
+            display: none;
+        }
+        .action.primary {
+            background: #222;
+            border-color: #222;
+            color: #fff;
+            &:hover {
+                background: #4c4c4c;
+                border-color: #4c4c4c;
+            }
+        }
+        .fields.range {
+            .field {
+                &:first-child {
+                    position: relative;
+
+                    .control {
+                        padding-left: 25px;
+
+                        &:after {
+                            content: ' \2013 ';
+                            display: inline-block;
+                            position: absolute;
+                            left: 0;
+                            text-align: center;
+                            top: 6px;
+                            width: 25px;
+                        }
+                    }
+                }
+
+                &:last-child {
+                    position: relative;
+
+                    div.mage-error[generated] {
+                        right: 0;
+                        position: absolute;
+                        top: 32px;
+                    }
+                }
+
+                &.with-addon {
+                    .control {
+                        padding-left: 45px;
+                    }
+                }
+            }
+        }
+
+        .group.price {
+            .addon {
+                .addafter {
+                    background: none;
+                    border: 0;
+                    padding-top: 6px;
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                }
+            }
+        }
+    }
+
+    .search.summary {
+        margin-bottom: @indent__s;
+    }
+}

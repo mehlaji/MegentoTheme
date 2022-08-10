@@ -1,0 +1,120 @@
+<?php
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+    $_xstorehelper = $this->helper('Redgiant\Xstore\Helper\Data');
+    
+    $_enable = $_xstorehelper->getConfig('xstore_settings/newsletter/enable');
+    $_delay = $_xstorehelper->getConfig('xstore_settings/newsletter/delay');
+    $_bgimage = $_xstorehelper->getConfig('xstore_settings/newsletter/bg_image');
+    $_customstyle = $_xstorehelper->getConfig('xstore_settings/newsletter/custom_style');
+    $_upload_path = \Redgiant\Xstore\Model\Config\Backend\Image\Newsletterbg::UPLOAD_DIR;    
+    
+    if($_enable) {
+?>
+<script type="text/javascript">
+require([
+        'jquery',
+        'jquery/jquery.cookie',
+		'fancybox'
+    ], function ($) {
+        var $newsletter = $('#newsletter_popup'),
+            $checkBox = $('#newsletterchkbox');
+
+        function checkCookie() {
+            if ($.cookie('xstoreNewsLetter') != 'yes' || $('body').hasClass('demo-site')) {
+                openNewsletterPopup();
+            }
+        }
+        function openNewsletterPopup() {
+            var pause = $newsletter.attr('data-pause') > 0 ? $newsletter.attr('data-pause') : 1000;
+            var page_interval = setInterval(function(){
+                setTimeout(function (){
+                    $.fancybox.open($newsletter, {
+                        animationEffect: "fade",
+                        animationDuration: 450,
+                        touch: false
+                    });
+                }, pause);
+                clearInterval(page_interval);
+            }, 1000);
+        }
+
+        $checkBox.change(function () {
+            if ($(this).is(':checked')) {
+                $.cookie('xstoreNewsLetter', 'yes', {
+                    expires: parseInt($newsletter.attr('data-expires'), 10)
+                });
+            } else {
+                $.cookie('xstoreNewsLetter', null, {
+                    path: '/'
+                });
+            }
+        });
+        <?php if($_enable == 1): ?>
+            if ($('body[class*="cms-index-index"]').length) {
+                checkCookie();
+            }
+        <?php else: ?>
+            checkCookie();
+        <?php endif; ?>
+});
+</script>
+<style type="text/css">
+    <?php
+        if($_customstyle){
+            echo $_customstyle;
+        }
+    ?>
+</style>
+<link rel="stylesheet" type="text/css" href="<?php echo $block->getViewFileUrl('fancybox/css/jquery.fancybox.min.css')?>">
+<div class="modal--newsletter" id="newsletter_popup" style="display: none;" data-pause="<?php echo $_delay ?>">
+    <div class="row no-gutters">
+        <div class="col-sm d-none d-md-flex align-items-center justify-content-center overflow-hidden">
+            <?php if(isset($_bgimage) && $_bgimage): 
+                $_bgimage_url = $_xstorehelper->getBaseUrl() . $_upload_path . '/' . $_bgimage;
+            ?>
+                <div class="newslettermodal-img"><img src="<?php echo $_bgimage_url ?>" alt="Newsletter Background"></div>
+            <?php else: ?>
+                <div class="newslettermodal-img"><img src="<?php echo $_xstorehelper->getBaseUrl() . 'xstore/newsletter/background/default.png' ?>" alt="Newsletter Background"></div>
+            <?php endif;?>
+        </div>
+        <div class="col-sm"><div class="newslettermodal-content"><div class="newslettermodal-content-center">
+            <div class="newslettermodal-content-logo"><img src="<?php echo $_xstorehelper->getLogoSrc(); ?>" alt=""></div>
+            <h3 class="h2-style newslettermodal-content-title">Sign up our newsletter</h3>
+            <div class="newslettermodal-content-text">Enter Your email address to sign up to receive our latest news and offers</div>
+            <form class="form subscribe"
+                novalidate
+                action="<?php echo $block->getFormActionUrl() ?>"
+                method="post"
+                data-mage-init='{"validation": {"errorClass": "mage-error"}}'
+                id="popup-newsletter-validate">
+                <?= $block->getBlockHtml('formkey') ?>
+                <div class="field newsletter">
+                    <div class="control">
+                        <input name="email" type="email" id="popup_newsletter_email"
+                                    data-validate="{required:true, 'validate-email':true}"/>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button class="action subscribe primary" title="<?php echo __('Subscribe') ?>" type="submit">
+                        <span><?php echo __('Subscribe') ?></span>
+                    </button>
+                </div>
+            </form>
+            <div class="subscribe-bottom">
+                <input type="checkbox" id="newsletterchkbox"/>
+                <label for="newsletterchkbox"><?php echo __("Don't show this popup again"); ?></label>
+            </div>
+        </div></div></div>
+    </div>
+</div>
+<?php
+    }
+?>

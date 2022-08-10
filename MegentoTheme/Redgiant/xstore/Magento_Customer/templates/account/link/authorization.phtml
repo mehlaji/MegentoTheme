@@ -1,0 +1,26 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Magento\Customer\Block\Account\AuthorizationLink $block */
+$dataPostParam = '';
+if ($block->isLoggedIn()) {
+    $dataPostParam = sprintf(" data-post='%s'", $block->getPostParams());
+}
+?>
+<li class="authorization-link">
+    <a <?php /* @noEscape */ echo $block->getLinkAttributes(); ?><?php /* @noEscape */ echo $dataPostParam; ?> title = "<?php if ($block->isLoggedIn()): ?><?php echo __('Log out'); ?><?php else: ?><?php echo __('Log in / Sign up'); ?><?php endif; ?>">
+    	<?php if ($block->isLoggedIn()): ?>
+    		<?php echo __('Log out'); ?>
+    	<?php else: ?>
+    		<?php echo __('Log in / Sign up'); ?>
+    	<?php endif; ?>
+    </a>
+    <?php if (!$block->isLoggedIn()): ?>
+    	<?php echo $this->getChildHtml('login_popup'); ?>
+	<?php endif; ?>
+</li>

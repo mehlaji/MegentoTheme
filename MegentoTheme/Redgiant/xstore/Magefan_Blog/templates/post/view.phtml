@@ -1,0 +1,66 @@
+<?php
+/**
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ *
+ * Glory to Ukraine! Glory to the heroes!
+ */
+?>
+<?php
+/**
+ * Blog post view template
+ *
+ * @var $block \Magefan\Blog\Block\Post\View
+ */
+?>
+<?php
+    $_helper = $this->helper('Redgiant\Xstore\Helper\Data');
+    $_post = $this->getPost();
+    $_postUrl = $_post->getPostUrl();
+    $_postName = $block->escapeHtml($_post->getTitle(), null, true);
+
+    $scontent = $_post->getShortContent();
+    $type = "";
+    preg_match('/<div\s([^>]*\s)?data-type="(.*?)"(.*?)>/', $scontent, $out);
+
+    if (!empty($out) && count($out) >= 3) {
+        $type = "style".$out[2];
+    }
+?>
+<div class="post-view">
+    <div class="post-holder post-holder-<?php echo $_post->getId() ?>">
+        <div class="post-header">
+            <?php if (!$type && $featuredImage = $_post->getFeaturedImage()): ?>
+            <div class="post-ftimg-hld">
+                <img src="<?php echo $featuredImage ?>" alt="<?php echo $_postName ?>" />
+            </div>
+            <?php endif; ?>
+            <?php if ($type): ?>
+                <?php echo $block->getShorContent() ?>
+            <?php endif; ?>
+            <div class="post-title-holder clearfix">
+                <h2 class="post-title">
+                    <?php echo $_postName; ?>
+                </h2>
+            </div>
+
+            <?php echo $this->getInfoHtml() ?>
+        </div>
+        <div class="post-content">
+            <div class="post-description clearfix">
+                <div class="post-text-hld">
+                    <?php echo $block->getContent() ?>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+        <div class="share-post">
+            <div class="addthis_inline_share_toolbox_w0tc"></div>
+            <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=<?php echo $_helper->getConfig('mfblog/social/add_this_pubid');?>"></script>
+            <style type="text/css">.addthis_inline_share_toolbox_w0tc > div.at-resp-share-element{display: inline-block !important;vertical-align: middle;}</style>
+        </div>
+        <div class="post-bottom">
+            <?php echo $this->getChildHtml('blog.post.bottom') ?>
+        </div>
+    </div>
+</div>

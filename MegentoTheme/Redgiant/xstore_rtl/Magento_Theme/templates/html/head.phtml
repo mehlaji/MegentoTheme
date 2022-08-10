@@ -1,0 +1,166 @@
+<?php 
+    $_helper = $this->helper('Redgiant\Xstore\Helper\Cssconfig');
+    $xstore_helper = $this->helper('Redgiant\Xstore\Helper\Data');
+    $header_type = $xstore_helper->getConfig('xstore_settings/header/header_type');
+?>
+<?php //Include Google fonts character subsets (such as extended latin, cyrillic)
+    $d = $this->getConfig('xstore_design');
+    $charSubset = "";
+    if (isset($d['font']['char_latin_ext']) && $d['font']['char_latin_ext']==1 )
+        $charSubset .= ',latin-ext';
+    if (isset($d['font']['char_subset']) && $d['font']['char_subset'])
+        $charSubset .= ','.$d['font']['char_subset'];
+    $font_weights = "%3A300%2C300italic%2C400%2C400italic%2C600%2C600italic%2C700%2C700italic%2C800%2C800italic";
+?>
+<?php if (isset($d['font']['custom']) && $d['font']['custom'] && $d['font']['font_family'] == 'google'): ?>
+<link rel="stylesheet" href='//fonts.googleapis.com/css?family=<?php echo str_replace(' ', '+', $d['font']['google_font_family']).$font_weights; echo $charSubset; ?>' type='text/css' />
+<?php endif;?>
+<link href="//fonts.googleapis.com/css?family=Luckiest+Guy:400%7CRaleway:400%7CLato:300,400,500,600,700%7CFredoka+One:400,700%7COpen+Sans:200,300,400,600,700%7CMontserrat:400,600,700%7C" rel="stylesheet">
+<?php
+    $header_type = $xstore_helper->getConfig('xstore_settings/header/header_type');
+?>
+<link rel="stylesheet" type="text/css" media="all" href="<?php echo $_helper->getXstoreWebDir().'css/header/rtl/type'.$header_type.'.css'; ?>">
+<link rel="stylesheet" type="text/css" media="all" href="<?php echo $_helper->getDesignFile()?>">
+<link rel="stylesheet" type="text/css" media="all" href="<?php echo $_helper->getSettingsFile()?>">
+
+<link rel="stylesheet" type="text/css" media="all" href="<?php echo $_helper->getXstoreWebDir().'css/custom.css'; ?>">
+<script type="text/javascript">
+var xstore_config = {
+    paths: {
+        'owlcarousel': 'owlcarousel/owl.carousel.min',
+        'swiper': 'swiper/js/swiper.min',
+        'swiper-skin': 'js/swiper-skin',
+        'imagesloaded' : 'packery/js/imagesloaded',
+        'jquery-bridget' : 'packery/js/jquery-bridget',
+        'packery' : 'packery/js/packery.pkgd.min',
+        'packery-skin' : 'js/packery-skin',
+        'fancybox': 'fancybox/js/jquery.fancybox.min',
+        'wow': 'wow/js/wow.min',
+        'parallax': 'parallax/parallax.min',
+        'lazysizes':'lazysizes/js/lazysizes.min'
+    },
+    shim: {
+        'owlcarousel': {
+            deps: ['jquery']
+        },
+        'fancybox': {
+            deps: ['jquery']
+        },
+        'swiper-skin': {
+          deps: ['jquery', 'swiper']
+        },
+        'imagesloaded': {
+          deps: ['jquery']
+        },
+        'packery' : {
+          deps: ['jquery']
+        },
+        'jquery-bridget': {
+          deps: ['jquery']
+        },
+        'parallax': {
+          deps: ['jquery']
+        },
+        'packery-skin' : {
+          deps: ['jquery', 'packery']
+        }
+    }
+};
+
+require.config(xstore_config);
+
+var store_base_url = "<?php echo $xstore_helper->getBaseLinkUrl(); ?>";
+
+require([
+    'jquery'
+], function ($) {
+    $(document).ready(function(){
+    	var header_one = $("header.page-header");
+<?php if($xstore_helper->getConfig('xstore_settings/header/sticky_header')): ?>
+		var windowWidth = window.innerWidth || $(window).width();
+	<?php if(!$xstore_helper->getConfig('xstore_settings/header/mobile_sticky_header')): ?>
+		if (windowWidth >= 992) {
+	<?php endif; ?>
+			if($(".page-wrapper").outerHeight() > $(window).innerHeight() + 300 && $(window).scrollTop() > 0) {
+				$(header_one).addClass("xstore-header_sticky");
+			} else if ($(window).scrollTop() <= 0) {
+				$(header_one).removeClass("xstore-header_sticky");
+			}
+	<?php if(!$xstore_helper->getConfig('xstore_settings/header/mobile_sticky_header')): ?>
+		}
+	<?php endif; ?>
+<?php endif; ?>
+	});
+
+	$(window).scroll(function () {
+<?php if($xstore_helper->getConfig('xstore_settings/header/sticky_header')): ?>
+		var windowWidth = window.innerWidth || $(window).width();
+		header_one = $("header.page-header");
+		<?php if(!$xstore_helper->getConfig('xstore_settings/header/mobile_sticky_header')): ?>
+		if (windowWidth >= 992) {
+	<?php endif; ?>
+			if($(".page-wrapper").outerHeight() > $(window).innerHeight() + 300 && $(window).scrollTop() > 200) {
+				$(header_one).addClass("xstore-header_sticky");
+			} else if ($(window).scrollTop() <= 200) {
+				$(header_one).removeClass("xstore-header_sticky");
+			}
+	<?php if(!$xstore_helper->getConfig('xstore_settings/header/mobile_sticky_header')): ?>
+		}
+	<?php endif; ?>
+<?php endif; ?>
+	});
+
+	/**
+     * Sticky Hide
+     */
+    var stickyHide = 1;
+    
+    if (stickyHide == 1) {
+      var scrollPrev = 0;
+
+      setTimeout(function () {
+        $(window).scroll(function () {
+          header_one = $("header.page-header");
+          <?php if ($header_type == 1): ?>
+          sticky_header_one = $("header.page-header .header-main");
+          <?php else: ?>
+          sticky_header_one = $("header.page-header .header-main");
+          <?php endif; ?>
+          var scrolled = $(this).scrollTop(),
+            firstScrollUp = false,
+            firstScrollDown = false;
+
+          if (scrolled > 0) {
+
+            if (scrolled > scrollPrev) {
+              firstScrollUp = false;
+
+              if (scrolled < $(sticky_header_one).height() + $(sticky_header_one).offset().top) {
+                if (firstScrollDown === false) {
+                  $(header_one).addClass('xstore-header_sticky-hide');
+
+                  firstScrollDown = true;
+                }
+              }
+            } else {
+              firstScrollDown = false;
+
+              if (scrolled > $(sticky_header_one).offset().top) {
+                if (firstScrollUp === false) {
+                  $(header_one).removeClass('xstore-header_sticky-hide');
+
+                  firstScrollUp = true;
+                }
+              }
+            }
+            scrollPrev = scrolled;
+          }
+
+        });
+      }, 2500);
+    }
+    /**
+     * End Sticky Hide
+     */
+});
+</script>

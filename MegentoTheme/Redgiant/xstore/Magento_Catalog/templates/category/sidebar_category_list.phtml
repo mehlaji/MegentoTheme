@@ -1,0 +1,32 @@
+<?php
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $_xtorehelper = $this->helper( 'Redgiant\Xstore\Helper\Data' );
+    $_max_level = $this->getData("max_level");
+    if(empty($_max_level)) $_max_level = 2;
+    $_category_id = $this->getData("category_id");
+    if(empty($_category_id)) $_category_id = 0;
+?>
+<div class="categories-sidebar">
+    <h3 class="sidebar-title"><span><?php echo __('Categories'); ?></span></h3>
+    <?php echo $_xtorehelper->getSidebarmenuHtml($_category_id, $_max_level); ?>
+</div>
+<script>
+    require([
+        'jquery'
+    ], function ($) {
+        $('.categories-sidebar .open-children-toggle').click(function(){
+            var bactive = $(this).parent().hasClass('active');
+            if(bactive) {
+                $(this).parent().removeClass('active');
+            }else{
+                $(this).parent().addClass('active');
+            }
+            var panel = $(this).parent().find(' > ul.children');
+            if (bactive){
+                panel.css('max-height','0');
+            } else {
+                panel.css('max-height', panel.prop('scrollHeight') + 'px');
+            }
+        });
+    });
+</script>

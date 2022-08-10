@@ -1,0 +1,122 @@
+<?php
+    $_helper = $this->helper('Redgiant\Xstore\Helper\Data');
+    $contacts_config = $this->getConfig('xstore_settings/contacts');
+    $_enable = $contacts_config['enable'];
+    $type = (int)$contacts_config["contacts_type"];
+    
+    if($_enable):
+        $_apikey = $contacts_config['api_key'];
+        $_zoom = $contacts_config['zoom'];
+        $_center_lat = $contacts_config['latitude'];
+        $_center_lng = $contacts_config['longitude'];
+        $_infoblock1 = $contacts_config['infoblock1'];
+        $_fullwidth = $contacts_config['full_width'];
+
+        $pin_marker = $_helper->getBaseUrl() . 'wysiwyg/xstore/googlemap/map-icon.png';
+        switch ($type) {
+            case 1:
+                $pin_marker = $_helper->getBaseUrl() . 'wysiwyg/xstore/googlemap/pin_black.png';
+                break;
+            case 2:
+                break;
+            case 3:
+                $pin_marker = "";
+                break;
+            case 4:
+                $pin_marker = $_helper->getBaseUrl() . 'wysiwyg/xstore/googlemap/pin_gray.png';
+                break;
+            case 5:
+                break;
+            case 6:
+                break;
+            case 7:
+                break;            
+        }
+    
+?>
+
+
+<script type="text/javascript" src="//maps.googleapis.com/maps/api/js?<?php if($_apikey): ?>key=<?php echo $_apikey; ?><?php else: ?>v=3.17<?php endif; ?>"></script>
+<script type="text/javascript">
+    function initialize() {
+        var pos = new google.maps.LatLng(<?php echo $_center_lat; ?>, <?php echo $_center_lng; ?>);
+        var mapOptions = {
+            center: pos,
+            panControl: true,
+            zoomControl: true,
+            mapTypeControl: true,
+            scaleControl: true,
+            streetViewControl: true,
+            overviewMapControl: true,            
+            zoom: <?php echo $_zoom; ?>
+        };
+        var map = new google.maps.Map(document.getElementById("store_map"), mapOptions);
+        var marker = new google.maps.Marker({
+            position: pos,
+            map: map,
+            icon: '<?php echo $pin_marker; ?>',
+            title: 'Xstore'
+        });
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+
+<?php
+    switch ($type) {
+        case 3:
+        /****************************************** Type 3 ******************************************/
+?>
+        <div class="container">
+            <?php echo $_helper->filterContent($_infoblock1); ?>
+        </div>
+<?php break;
+    }
+?>
+
+<?php if($_fullwidth): ?>
+    <div id="store_map" class="map-type<?php echo $type; ?>"></div>
+<?php else: ?>
+    <div class="container">
+        <div id="store_map" class="map-type<?php echo $type; ?>"></div>
+    </div>
+<?php endif; ?>
+
+<?php
+    switch ($type) {
+        case 1:
+        /****************************************** Type 1 ******************************************/
+?>
+    <div class="container contactinfo-type-<?php echo $type; ?>">
+        <div class="row">
+            <div id="contactinfo1" class="col-md-3">
+                <div class="content">
+                    <?php echo $_helper->filterContent($_infoblock1); ?>
+                </div>
+            </div>
+        </div>        
+    </div>    
+<?php
+        break;
+        case 2:
+        /****************************************** Type 2 ******************************************/
+?>
+        <div class="block-map">
+            <div class="content">
+                <?php echo $_helper->filterContent($_infoblock1); ?>
+            </div>
+        </div>
+<?php
+        break;
+        case 4:
+        case 5:
+        /****************************************** Type 4, 5 ******************************************/
+?>
+        <div class="map-info">
+            <?php echo $_helper->filterContent($_infoblock1); ?>
+        </div>
+       
+<?php
+        break;
+    }
+?>
+<?php  endif; ?>

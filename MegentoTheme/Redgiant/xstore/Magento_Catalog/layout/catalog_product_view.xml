@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page layout="1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <container name="product-info-container" htmlTag="div" htmlClass="product-info-container row" before="-">
+            	<block class="Redgiant\Xstore\Block\Template" name="product.info.custom" template="Magento_Catalog::product/product_view_custom_block.phtml"/>
+            </container>
+        </referenceContainer>
+        <referenceContainer name="product.info.main">
+            <block class="Redgiant\Xstore\Block\Template" name="product_view_addthis_links" after="-" template="Magento_Catalog::product/view/addthis.phtml"/>
+        </referenceContainer>
+        <referenceContainer name="columns.top">
+            <block class="Magento\Catalog\Block\Product\View" name="prev_next_products" template="Magento_Catalog::product/view/prev_next.phtml" before="-"/>
+        </referenceContainer>
+        <move element="page.main.title" destination="product.info.main" before="-"/>
+        <move element="product.info.media" destination="product-info-container" after="product.info.custom"/>
+        <move element="product.info.main" destination="product-info-container" after="product.info.media"/>
+        <move element="product.info.review" destination="product.info.main" after="product.info.price"/>
+        <move element="product.info.overview" destination="product.info.main" after="product.info.review"/>
+        <move element="product.info.stock.sku" destination="product.info.main" before="product_view_addthis_links"/>
+    </body>
+</page>

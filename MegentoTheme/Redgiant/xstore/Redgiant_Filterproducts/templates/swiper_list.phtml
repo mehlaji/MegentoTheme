@@ -1,0 +1,625 @@
+<?php
+/**
+ * Copyright © 2013-2018 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+use Magento\Framework\App\Action\Action;
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/**
+ * Product list template
+ *
+ * @var $block \Redgiant\Filterproducts\Block\
+ */
+?>
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$_productCollection = $block->getLoadedProductCollection();
+$_helper = $this->helper( 'Magento\Catalog\Helper\Output' );
+$_imagehelper = $this->helper('Magento\Catalog\Helper\Image');
+$_xstorehelper = $this->helper( 'Redgiant\Xstore\Helper\Data' );
+$_dailydealhelper=$this->helper('Redgiant\Dailydeals\Helper\Data');
+
+$_sale_label = $_xstorehelper->getConfig('xstore_settings/catalog/sale_label');
+$_new_label = $_xstorehelper->getConfig('xstore_settings/catalog/new_label');
+$_label_type = $_xstorehelper->getConfig('xstore_settings/catalog/label_type'); 
+
+$_show_review = $this->getData("rating_star");
+if($_show_review == null)
+    $_show_review = $_xstorehelper->getConfig('xstore_settings/catalog/show_review');
+$_review_model = $_xstorehelper->getModel('\Magento\Review\Model\Review');
+
+$_grid_style = $this->getData('item_type');
+if($_grid_style == null) {
+    $_grid_style = 'type1';
+} else {
+    $_grid_style = 'type' . $_grid_style;
+}
+
+$_show_percent = $_xstorehelper->getConfig('xstore_settings/catalog/show_percent');
+
+$aspect_ratio = $this->getData("aspect_ratio");
+if($aspect_ratio == null) {
+    $aspect_ratio = 0;
+}
+$image_width = $this->getData("image_width");
+if(!$image_width) {
+    $image_width = 400;
+}
+$image_height = $this->getData("image_height");
+if($aspect_ratio)
+    $image_height = $image_width;
+if(!$image_height) {
+    $image_height = 400;
+}
+
+$swiper_prop = $this->getData("swiper_prop");
+if($swiper_prop == null)
+    $swiper_prop = 'data-loop="1" data-breakpoints="1" data-xs-slides="1" data-sm-slides="2" data-md-slides="3" data-lt-slides="4" data-slides-per-view="4" data-autoheight="1" data-slides-per-group="1" data-autoplay="0" data-speed="300"';
+
+$moduleManager = $objectManager->get('\Magento\Framework\Module\Manager');
+
+$image_hover_type = $this->getData("image_type");
+if(!$image_hover_type)
+    $image_hover_type = $_xstorehelper->getConfig("xstore_settings/catalog/image_type");
+
+$_quick_cart = $this->getData("quick_cart");
+if(!$_quick_cart)
+    $_quick_cart = $_xstorehelper->getConfig('xstore_settings/shopping_cart/quick_cart');
+?>
+<?php if ( !$_productCollection->count() ): ?>
+    <div class="message info empty">
+        <div><?php echo __('We can\'t find products matching the selection.') ?></div>
+    </div>
+<?php else: ?>
+    <?php
+    $viewMode = 'grid';
+    $image = 'category_page_grid';
+    $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+    $_alternative_img = 'category_page_grid_altimage';
+    $showDescription = 0;
+    if ($_grid_style == 'type5') {
+        $showDescription = 1;
+    }
+    ?>
+    <div class="products wrapper grid products-grid swiper-container" <?php echo $swiper_prop; ?>>
+        <?php $iterator = 1;?>
+
+        <div class="products list swiper-wrapper">
+            <?php foreach ( $_productCollection as $_product ): ?>
+                <?php echo($iterator++ == 1) ? '<div class="item product product-item swiper-slide">' : '</div><div class="item product product-item swiper-slide">' ?>
+                <div class="product-item-info <?php echo $_grid_style; ?>" data-container="product-grid">
+                    <div class="product-photo-container">
+                        <a href="<?php echo $_product->getProductUrl() ?>" class="product photo product-item-photo" tabindex="-1">
+                            <?php if($image_hover_type): ?>
+                                <?php
+                                    $image_type = 'category_page_grid';
+                                    $_product = $objectManager->create('Magento\Catalog\Model\Product')->load($_product->getId());
+                                    $images = $_product->getMediaGalleryImages();
+                                    if ($images instanceof \Magento\Framework\Data\Collection) {
+                                        $image_count = 0;
+                                        foreach ($images as $image) {
+                                            $image_class = "product-image-photo default-image active";
+                                            if ($image_hover_type == 'hover' && $image_count > 0)
+                                                $image_class = "hover-image";
+                                            if ($image_hover_type == 'hover' && $image_count > 1)
+                                                continue;
+                                            if ($image_hover_type == 'gallery' && $image_count > 0)
+                                                $image_class = "";
+                                ?>
+                                    <?php if($aspect_ratio): ?>
+                                    <img class="<?php echo $image_class; ?>" src="<?php echo $_imagehelper->init($_product, $image_type)->setImageFile($image->getFile())->constrainOnly(FALSE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->resize($image_width)->getUrl(); ?>" alt=""/>
+                                    <?php else: ?>
+                                    <img class="<?php echo $image_class; ?>" src="<?php echo $_imagehelper->init($_product, $image_type)->setImageFile($image->getFile())->resize($image_width, $image_height)->getUrl(); ?>" alt=""/>
+                                    <?php endif; ?>
+                                <?php
+                                            $image_count++;
+                                        }
+                                    }
+                                ?>
+                                <?php if($image_count < 1): ?>
+                                    <?php
+                                        $image_type = 'category_page_grid';
+                                        if($aspect_ratio)
+                                            $productImage = $_imagehelper->init($_product, $image_type)->constrainOnly(FALSE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->resize($image_width);
+                                        else
+                                            $productImage = $_imagehelper->init($_product, $image_type)->resize($image_width, $image_height);
+                                        $productImageUrl = $productImage->getUrl();
+                                    ?>
+                                    <img class="product-image-photo default-image active" src="<?php echo $productImageUrl; ?>" alt=""/>
+                                <?php endif; ?>
+                            <?php else: ?>
+                                <?php
+                                    $image_type = 'category_page_grid';
+                                    if($aspect_ratio)
+                                        $productImage = $_imagehelper->init($_product, $image_type)->constrainOnly(FALSE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->resize($image_width);
+                                    else
+                                        $productImage = $_imagehelper->init($_product, $image_type)->resize($image_width, $image_height);
+                                    $productImageUrl = $productImage->getUrl();
+                                ?>
+                                <img class="product-image-photo default-image active" src="<?php echo $productImageUrl; ?>" alt=""/>
+                            <?php endif; ?>
+                        </a>
+                        <?php if($image_hover_type == 'gallery' && $image_count > 1): ?>
+                            <div class="gallery-nav">
+                                <a href="javascript:void(0)" class="gallery-prev"></a>
+                                <a href="javascript:void(0)" class="gallery-next"></a>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php
+                            $product_label = "";
+                            if($_sale_label) {
+                                $orgprice = $_product->getPrice();
+                                $specialprice = $_product->getSpecialPrice();
+                                $specialfromdate = $_product->getSpecialFromDate();
+                                $specialtodate = $_product->getSpecialToDate();
+                                $today = time();
+                                if(!$specialprice)
+                                    $specialprice = $orgprice;
+                                if($specialprice < $orgprice) {
+                                    if((is_null($specialfromdate) && is_null($specialtodate)) || ($today >= strtotime($specialfromdate) && is_null($specialtodate)) || ($today <= strtotime($specialtodate) && is_null($specialfromdate)) || ($today >= strtotime($specialfromdate) && $today <= strtotime($specialtodate))){
+                                        $percent = number_format ( ($specialprice - $orgprice) / $orgprice * 100) . '%';
+                                        if($_show_percent) $_sale_label = $percent;
+                                        $product_label .= '<div class="product-label sale-label">';$product_label .= '<span>'. $_sale_label .'</span>';$product_label .= '</div>';
+                                    }
+                                }
+                            }
+                            if($_new_label) {
+                                $now = date("Y-m-d");
+                                $newsFrom= substr($_product->getData('news_from_date'),0,10);
+                                $newsTo=  substr($_product->getData('news_to_date'),0,10);
+                                if ($newsTo != '' || $newsFrom != ''){
+                                    if (($newsTo != '' && $newsFrom != '' && $now>=$newsFrom && $now<=$newsTo) || ($newsTo == '' && $now >=$newsFrom) || ($newsFrom == '' && $now<=$newsTo)) {
+                                        $product_label .= '<div class="product-label new-label">';$product_label .= '<span>'. $_new_label .'</span>';$product_label .= '</div>';
+                                    }
+                                }
+                            }
+                            echo '<div class="product-label-container">'.$product_label.'</div>';
+                        ?> 
+
+                        <?php if ($_product->isSaleable() && $_grid_style == 'type9'): ?>
+                        <div class="actions-primary">
+                            <?php $postParams = $block->getAddToCartPostParams($_product); ?>
+                            <form data-role="tocart-form" data-product-sku="<?php echo $block->escapeHtml($_product->getSku()) ?>" action="<?php echo $postParams['action'] ?>" method="post">
+                                <input type="hidden" name="product" value="<?php echo $postParams['data']['product'] ?>">
+                                <input type="hidden" name="<?php echo Action::PARAM_NAME_URL_ENCODED ?>" value="<?php echo $postParams['data'][Action::PARAM_NAME_URL_ENCODED] ?>">
+                                <?php echo $block->getBlockHtml('formkey') ?>
+                                <button type="submit"
+                                        title="<?php echo __('Add to Cart') ?>"
+                                        class="action tocart primary">
+                                    <span><?php echo __('Make Order') ?></span>
+                                </button>
+                            </form>
+                        </div>
+                        <?php endif; ?>
+
+                        <?php if($_grid_style == 'type7' || $_grid_style == 'type8'): ?>
+                            <?php if($moduleManager->isEnabled('WeltPixel_Quickview')): ?>
+                            <a class="weltpixel-quickview action" data-quickview-url="<?php echo $_xstorehelper->getQuickViewUrl($_product->getId()); ?>" href="javascript:void(0);"><span><?php echo __('Quickview'); ?></span></a>
+                            <?php endif; ?>
+                        <?php endif; ?>
+
+                        <?php if (!$_product->isSaleable()): ?>
+                            <?php if ($_product->isAvailable()): ?>
+                                <div class="stock available"><span><?php echo __('In stock') ?></span></div>
+                            <?php else: ?>
+                                <div class="stock unavailable"><span><?php echo __('Out of stock') ?></span></div>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                        <?php if($_grid_style == 'type1' || $_grid_style == 'type2' || $_grid_style == 'type3' || $_grid_style == 'type4' || $_grid_style == 'type7' || $_grid_style == 'type8'): ?>
+                            <div class="product actions product-item-actions">
+                                <div data-role="add-to-links" class="actions-secondary ">
+                                    <?php if($_grid_style != 'type7' && $_grid_style != 'type8'): ?>
+                                        <?php if($moduleManager->isEnabled('WeltPixel_Quickview')): ?>
+                                        <a class="weltpixel-quickview action" data-quickview-url="<?php echo $_xstorehelper->getQuickViewUrl($_product->getId()); ?>" href="javascript:void(0);"><span><?php echo __('Quickview'); ?></span></a>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                    <?php if ($_product->isSaleable() &&  $_grid_style != 'type7' &&  $_grid_style != 'type8' && !$_quick_cart): ?>
+                                    <div class="actions-primary">
+                                        <?php $postParams = $block->getAddToCartPostParams($_product); ?>
+                                        <form data-role="tocart-form" data-product-sku="<?php echo $block->escapeHtml($_product->getSku()) ?>" action="<?php echo $postParams['action'] ?>" method="post">
+                                            <input type="hidden" name="product" value="<?php echo $postParams['data']['product'] ?>">
+                                            <input type="hidden" name="<?php echo Action::PARAM_NAME_URL_ENCODED ?>" value="<?php echo $postParams['data'][Action::PARAM_NAME_URL_ENCODED] ?>">
+                                            <?php echo $block->getBlockHtml('formkey') ?>
+                                            <button type="submit"
+                                                    title="<?php echo __('Add to Cart') ?>"
+                                                    class="action tocart primary">
+                                                <span><?php echo __('Add to Cart') ?></span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <?php endif; ?>
+                                    <?php if ($this->helper('Magento\Wishlist\Helper\Data')->isAllow()): ?>
+                                        <a href="#"
+                                           class="action towishlist actions-secondary"
+                                           title="<?php echo $block->escapeHtml(__('Add to Wish List')); ?>"
+                                           aria-label="<?php echo $block->escapeHtml(__('Add to Wish List')); ?>"
+                                           data-post='<?php echo $block->getAddToWishlistParams($_product); ?>'
+                                           data-action="add-to-wishlist"
+                                           role="button">
+                                            <span>Add to Wish List</span>
+                                        </a>
+                                    <?php endif; ?>
+                                    <?php
+                                    $compareHelper = $this->helper('Magento\Catalog\Helper\Product\Compare');
+                                    ?>
+                                    <a href="#"
+                                       class="action tocompare actions-secondary"
+                                       title="<?php echo $block->escapeHtml(__('Add to Compare')); ?>"
+                                       aria-label="<?php echo $block->escapeHtml(__('Add to Compare')); ?>"
+                                       data-post='<?php echo $compareHelper->getPostDataParams($_product); ?>'
+                                       role="button">
+                                        <span>Add to Compare</span>
+                                    </a>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="product details product-item-details">
+                        <?php
+                            $_productNameStripped = $block->stripTags($_product->getName(), null, true);
+                        ?>
+                        <?php if($_grid_style != 'type4' && $_grid_style != 'type9'): ?>
+                        <?php echo $block->getProductDetailsHtml( $_product ); ?>
+                        <?php
+                            $_categoryIds = $_product->getCategoryIds();
+                            if(count($_categoryIds) > 0 && $_categoryIds[0] != $_xstorehelper->getRootCategoryId() ) {
+                                echo '<div class="product-cats">';
+                                $i = 0;
+                                foreach($_categoryIds as $_categoryId) {
+                                    if($_categoryId != $_xstorehelper->getRootCategoryId()) {
+                                        $category = $objectManager->create('Magento\Catalog\Model\Category')->load($_categoryId);
+                                        if($i > 0)
+                                            echo ", ";
+                                        echo '<a href="'.$category->getUrl().'">'.$category->getName().'</a>';
+                                        $i ++;
+                                    }
+                                }
+                                echo '</div>';
+                            }
+                        ?>
+                        <?php endif; ?>
+                        <strong class="product name product-item-name">
+                            <a class="product-item-link"
+                            href="<?php echo $_product->getProductUrl() ?>">
+                                <?php echo $_helper->productAttribute( $_product, $_product->getName(), 'name' ); ?>
+                            </a>
+                        </strong>
+                        <?php
+                            if($_show_review) {
+                                $review_html = $block->getReviewsSummaryHtml( $_product, $templateType );
+
+                                if($review_html)
+                                    echo $review_html;
+                                else {
+                        ?>
+                        <div class="product-reviews-summary short">
+                            <div class="rating-summary">
+                                <span class="label"><span>Rating:</span></span>
+                                <div class="rating-result" title="0%">
+                                    <span style="width:0%"><span>0%</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                                }
+                            }
+                        ?>
+                        <?php echo $block->getProductPrice( $_product ); ?>
+                        <div class="product-item-inner">
+                            <?php if($_grid_style == 'type6'): ?>
+                                <div class="product actions product-item-actions">
+                                    <div class="actions-primary">
+                                        <?php if ($_product->isSaleable()): ?>
+                                            <?php $postParams = $block->getAddToCartPostParams($_product); ?>
+                                            <?php if($_quick_cart): ?>
+                                            <div class="quick-cart-wrapper">
+                                                <form data-role="tocart-form" data-product-sku="<?php echo $block->escapeHtml($_product->getSku()) ?>" action="<?php echo $postParams['action'] ?>" method="post">
+                                                    <input type="hidden" name="product" value="<?php echo $postParams['data']['product'] ?>">
+                                                    <input type="hidden" name="<?php echo Action::PARAM_NAME_URL_ENCODED ?>" value="<?php echo $postParams['data'][Action::PARAM_NAME_URL_ENCODED] ?>">
+                                                    <?php echo $block->getBlockHtml('formkey') ?>
+                                                    <?php
+                                                        $in_cart = 0;
+                                                        $cart_qty = 1;
+                                                    ?>
+                                                    <?php if($_product->getTypeId() != \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE): ?>
+                                                    <div class="field qty <?php if(!$in_cart): ?>hide<?php endif; ?>" data-product-id="<?php echo $_product->getId(); ?>" data-product-sku="<?php echo $_product->getSku(); ?>">
+                                                        <div class="control">
+                                                            <input type="number" name="cart_qty" value="<?php echo $cart_qty; ?>" title="Qty" class="input-text qty" data-validate="{&quot;required-number&quot;:true,&quot;validate-item-quantity&quot;:{&quot;minAllowed&quot;:1,&quot;maxAllowed&quot;:10000}}">
+                                                            <div class="qty-changer">
+                                                                <a href="javascript:void(0)" class="qty-dec"><i class="et-icon et-minus"></i></a>
+                                                                <a href="javascript:void(0)" class="qty-inc"><i class="et-icon et-plus"></i></a>
+                                                            </div>
+                                                            <div class="qty-manual-changer">
+                                                                <a href="javascript:void(0)" class="qty-cancel"><?php echo __('Cancel'); ?></a>
+                                                                <a href="javascript:void(0)" class="qty-update"><?php echo __('Update'); ?></a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <?php endif; ?>
+                                                    <button type="submit" data-product-id="<?php echo $_product->getId(); ?>" data-product-sku="<?php echo $_product->getSku(); ?>"
+                                                        title="<?php echo $block->escapeHtml(__('Add to Cart')); ?>"
+                                                        class="action tocart primary <?php if($in_cart && $_product->getTypeId() != \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE): ?>hide<?php endif; ?>">
+                                                        <span><?php echo __('Add to Cart') ?></span>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                            <?php else: ?>
+                                            <form data-role="tocart-form" data-product-sku="<?php echo $block->escapeHtml($_product->getSku()) ?>" action="<?php echo $postParams['action'] ?>" method="post">
+                                                <input type="hidden" name="product" value="<?php echo $postParams['data']['product'] ?>">
+                                                <input type="hidden" name="<?php echo Action::PARAM_NAME_URL_ENCODED ?>" value="<?php echo $postParams['data'][Action::PARAM_NAME_URL_ENCODED] ?>">
+                                                <?php echo $block->getBlockHtml('formkey') ?>
+                                                <button type="submit"
+                                                        title="<?php echo __('Add to Cart') ?>"
+                                                        class="action tocart primary">
+                                                    <span><?php echo __('Add to Cart') ?></span>
+                                                </button>
+                                            </form>
+                                            <?php endif; ?>
+                                        <?php else: ?>
+                                            <?php if ($_product->isAvailable()): ?>
+                                                <div class="stock available"><span><?php echo __('In stock') ?></span></div>
+                                            <?php else: ?>
+                                                <div class="stock unavailable"><span><?php echo __('Out of stock') ?></span></div>
+                                            <?php endif; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div data-role="add-to-links" class="actions-secondary">
+                                        <a class="weltpixel-quickview action" data-quickview-url="<?php echo $_xstorehelper->getQuickViewUrl($_product->getId()); ?>" href="javascript:void(0);"><span><?php echo __('Quickview'); ?></span></a>
+                                        <?php if ($this->helper('Magento\Wishlist\Helper\Data')->isAllow()): ?>
+                                            <a href="#"
+                                               class="action towishlist actions-secondary"
+                                               title="<?php echo $block->escapeHtml(__('Add to Wish List')); ?>"
+                                               aria-label="<?php echo $block->escapeHtml(__('Add to Wish List')); ?>"
+                                               data-post='<?php echo $block->getAddToWishlistParams($_product); ?>'
+                                               data-action="add-to-wishlist"
+                                               role="button">
+                                                <span>Add to Wish List</span>
+                                            </a>
+                                        <?php endif; ?>
+                                        <?php
+                                        $compareHelper = $this->helper('Magento\Catalog\Helper\Product\Compare');
+                                        ?>
+                                        <a href="#"
+                                           class="action tocompare actions-secondary"
+                                           title="<?php echo $block->escapeHtml(__('Add to Compare')); ?>"
+                                           aria-label="<?php echo $block->escapeHtml(__('Add to Compare')); ?>"
+                                           data-post='<?php echo $compareHelper->getPostDataParams($_product); ?>'
+                                           role="button">
+                                            <span>Add to Compare</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                            <?php if($_quick_cart && $_grid_style != 'type6'): ?>
+                            <div class="quick-cart-wrapper">
+                                <?php if ($_product->isSaleable()): ?>
+                                    <?php $postParams = $block->getAddToCartPostParams($_product); ?>
+                                    <form data-role="tocart-form" data-product-sku="<?php echo $block->escapeHtml($_product->getSku()) ?>" action="<?php echo $postParams['action'] ?>" method="post">
+                                        <input type="hidden" name="product" value="<?php echo $postParams['data']['product'] ?>">
+                                        <input type="hidden" name="<?php echo Action::PARAM_NAME_URL_ENCODED ?>" value="<?php echo $postParams['data'][Action::PARAM_NAME_URL_ENCODED] ?>">
+                                        <?php echo $block->getBlockHtml('formkey') ?>
+                                        <?php
+                                            $in_cart = 0;
+                                            $cart_qty = 1;
+                                        ?>
+                                        <?php if($_product->getTypeId() != \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE): ?>
+                                        <div class="field qty <?php if(!$in_cart): ?>hide<?php endif; ?>" data-product-id="<?php echo $_product->getId(); ?>" data-product-sku="<?php echo $_product->getSku(); ?>">
+                                            <div class="control">
+                                                <input type="number" name="cart_qty" value="<?php echo $cart_qty; ?>" title="Qty" class="input-text qty" data-validate="{&quot;required-number&quot;:true,&quot;validate-item-quantity&quot;:{&quot;minAllowed&quot;:1,&quot;maxAllowed&quot;:10000}}">
+                                                <div class="qty-changer">
+                                                    <a href="javascript:void(0)" class="qty-dec"><i class="et-icon et-minus"></i></a>
+                                                    <a href="javascript:void(0)" class="qty-inc"><i class="et-icon et-plus"></i></a>
+                                                </div>
+                                                <div class="qty-manual-changer">
+                                                    <a href="javascript:void(0)" class="qty-cancel"><?php echo __('Cancel'); ?></a>
+                                                    <a href="javascript:void(0)" class="qty-update"><?php echo __('Update'); ?></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php endif; ?>
+                                        <button type="submit" data-product-id="<?php echo $_product->getId(); ?>" data-product-sku="<?php echo $_product->getSku(); ?>"
+                                            title="<?php echo $block->escapeHtml(__('Add to Cart')); ?>"
+                                            class="action tocart primary <?php if($in_cart && $_product->getTypeId() != \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE): ?>hide<?php endif; ?>">
+                                            <span><?php echo __('Add to Cart') ?></span>
+                                        </button>
+                                    </form>
+                                <?php else: ?>
+                                    <?php if ($_product->isAvailable()): ?>
+                                        <div class="stock available"><span><?php echo __('In stock') ?></span></div>
+                                    <?php else: ?>
+                                        <div class="stock unavailable"><span><?php echo __('Out of stock') ?></span></div>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            </div>
+                            <?php endif; ?>
+                            <?php if ($showDescription):?>
+                                <div class="product description product-item-description">
+                                    <?php echo $_helper->productAttribute($_product, $_product->getShortDescription(), 'short_description') ?>
+                                    <a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $_productNameStripped ?>"
+                                       class="action more"><?php echo __('Learn More') ?></a>
+                                </div>
+                            <?php endif; ?>
+                            <?php if($_grid_style == 5): ?>
+                                <ul class="product-item-attributes">
+                            <?php
+                                $product = $_xstorehelper->getModel('Magento\Catalog\Model\Product')->load($_product->getId());
+
+                                $attributes = $product->getAttributes();
+                                foreach ($attributes as $attribute) {
+                                    if ($attribute->getIsVisibleOnFront() && !in_array($attribute->getAttributeCode(), [])) {
+                                        $value = $attribute->getFrontend()->getValue($product);
+
+                                        if ($value instanceof Phrase) {
+                                            $value = (string)$value;
+                                        }
+
+                                        if (is_string($value) && strlen($value)) {
+                                            echo '<li>';
+                                            echo '<span class="attr-code">'.__($attribute->getStoreLabel()).':</span>';
+                                            echo '<span class="attr-value">'.$value.'</span>';
+                                            echo '</li>';
+                                        }
+                                    }
+                                }
+                            ?>
+                                </ul>
+                            <?php endif; ?>
+
+                            <?php if ($_product->isSaleable() && $_grid_style == 'type8' && !$_quick_cart): ?>
+                            <div class="actions-primary">
+                                <?php $postParams = $block->getAddToCartPostParams($_product); ?>
+                                <form data-role="tocart-form" data-product-sku="<?php echo $block->escapeHtml($_product->getSku()) ?>" action="<?php echo $postParams['action'] ?>" method="post">
+                                    <input type="hidden" name="product" value="<?php echo $postParams['data']['product'] ?>">
+                                    <input type="hidden" name="<?php echo Action::PARAM_NAME_URL_ENCODED ?>" value="<?php echo $postParams['data'][Action::PARAM_NAME_URL_ENCODED] ?>">
+                                    <?php echo $block->getBlockHtml('formkey') ?>
+                                    <button type="submit"
+                                            title="<?php echo __('Add to Cart') ?>"
+                                            class="action tocart primary">
+                                        <span><?php echo __('Add to Cart') ?></span>
+                                    </button>
+                                </form>
+                            </div>
+                            <?php endif; ?>
+                            <!-- Dailydeal Product data -->
+                            <?php if($_dailydealhelper->isDealProduct($_product->getId())) : ?>
+                            <?php $unique_id = rtrim(base64_encode(md5(microtime())),"="); ?>
+                            <input type="hidden" id="todate_<?php echo $unique_id; ?>" value="<?php echo $_dailydealhelper->getDailydealToDate($_product->getSku()); ?>" >
+                            <input type="hidden" id="fromdate_<?php echo $unique_id; ?>" value="<?php echo $_dailydealhelper->getDailydealFromDate($_product->getSku()); ?>">
+                            <div class="rg-dailydeal-wrapper" style="display:none;" data-unique-id="<?php echo $unique_id; ?>">
+                                <div class="rg-dailydeal">
+                                    <p id="expired_<?php echo $unique_id; ?>"></p> 
+                                    <div class="countdowncontainer countdowncontainer_<?php echo $unique_id; ?>" style="display:none;">
+                                        <span class="number-wrapper">
+                                            <span class="number day"><p id="countdown_days_<?php echo $unique_id; ?>">00</p></span>
+                                            <div class="caption"><?php echo __('days'); ?></div>
+                                        </span>
+
+                                        <span class="number-wrapper">
+                                            <span class="number hour"><p id="countdown_hours_<?php echo $unique_id; ?>">00</p></span>
+                                            <div class="caption"><?php echo __('hours'); ?></div>
+                                        </span>
+
+                                        <span class="number-wrapper">
+                                            <span class="number min"><p id="countdown_minutes_<?php echo $unique_id; ?>">00</p></span>
+                                            <div class="caption"><?php echo __('mins'); ?></div>
+                                        </span>
+
+                                        <span class="number-wrapper">
+                                            <span class="number sec"><p id="countdown_seconds_<?php echo $unique_id; ?>">00</p></span>
+                                            <div class="caption"><?php echo __('secs'); ?></div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php endif; ?> 
+                            <!-- Dailydeal Product End -->
+                        </div>
+                    </div>
+                </div>
+                <?php echo($iterator == count($_productCollection)+1) ? '</div>' : '' ?>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    
+    <?php if (!$block->isRedirectToCartEnabled()) : ?>
+        <script type="text/x-magento-init">
+        {
+            "[data-role=tocart-form], .form.map.checkout": {
+                "catalogAddToCart": {
+                    "product_sku": "<?php /* @escapeNotVerified */  echo $_product->getSku() ?>"
+                }
+            }
+        }
+        </script>
+    <?php endif; ?>
+    <script>
+        require([
+        'jquery',
+        'swiper',
+        'swiper-skin',
+        ], function ($, Swiper) {
+            Swiper_skin.init();
+        });
+    </script>
+    <script type="text/javascript">
+    require([
+        'jquery'        
+    ], function ($) {
+    // Timer for LEFT time for Dailydeal product
+        var _second = 1000;
+        var _minute = _second * 60;
+        var _hour = _minute * 60;
+        var _day = _hour * 24;
+        var timer;
+
+        //Set date as magentodatetime 
+        var date = new Date('<?php echo $_dailydealhelper->getcurrentDate() ?>');
+        var l_date = new Date();
+        var offset_date = l_date - date;
+
+        function showRemaining() 
+        {        
+            $(".rg-dailydeal-wrapper").each(function(){
+                var unique_id = $(this).attr("data-unique-id");
+                // get Value of dailydeal product
+                var cid='countdown_'+unique_id;
+                var daysid='countdown_days_'+unique_id;
+                var hoursid='countdown_hours_'+unique_id;
+                var minutesid='countdown_minutes_'+unique_id;
+                var secondsid='countdown_seconds_'+unique_id;
+
+                var startdateid='fromdate_'+unique_id;
+                var id='todate_'+unique_id;
+
+                var enddate = new Date($('#'+id).val());
+                var dealstartdate=new Date($('#'+startdateid).val());
+
+                var currentdate=new Date();
+
+                //Get Difference between Two dates
+                var distance = enddate - (currentdate - offset_date);
+
+                $('.rg-dailydeal-wrapper').show();
+
+                if (distance < 0) {
+                   // clearInterval(timer);
+                    $('#expired_'+unique_id).html("<span style='font-size:25px; color:#000;'>EXPIRED!<span>");
+
+                } else if(dealstartdate > currentdate) {
+                   $('.countdowncontainer_'+unique_id).hide();
+                   var msg="<span style='font-size:15px; color:#000;'> Coming Soon..<br>Deal Start at:<br>"+$('#'+startdateid).val()+"<span>";
+                   $('#expired_'+unique_id).html(msg);
+                } else {
+                    var days = Math.floor(distance / _day);
+                    var hours = Math.floor((distance % _day) / _hour);
+                    var minutes = Math.floor((distance % _hour) / _minute);
+                    var seconds = Math.floor((distance % _minute) / _second);
+
+                    if(hours < 10)
+                        hours = "0" + hours;
+                    if(minutes < 10)
+                        minutes = "0" + minutes;
+                    if(seconds < 10)
+                        seconds = "0" + seconds;
+                    $('.countdowncontainer_'+unique_id).show();
+                    $('#'+daysid).html(days);
+                    $('#'+hoursid).html(hours);
+                    $('#'+minutesid).html(minutes);
+                    $('#'+secondsid).html(seconds);
+                }
+            });
+        }
+        
+        // Set Interval
+        timer = setInterval(function() 
+        {
+            showRemaining();
+        }, 1000); 
+    });   
+    </script>
+<?php endif; ?>

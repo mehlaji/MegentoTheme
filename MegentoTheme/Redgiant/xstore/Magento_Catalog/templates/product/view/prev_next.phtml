@@ -1,0 +1,76 @@
+<?php
+    $xstore_helper = $this->helper('Redgiant\Xstore\Helper\Data');
+    $quicknav = $xstore_helper->getConfig('xstore_settings/product/quicknav');
+    $_helper = $this->helper('Magento\Catalog\Helper\Output');
+    $_imagehelper = $this->helper('Magento\Catalog\Helper\Image');
+    
+    $priceRender = $this->getLayout()->getBlock('product.price.render.default')->setData('is_product_list', true);
+    
+    if($quicknav) {
+        $_product = $block->getProduct();
+        $prev_product = $xstore_helper->getPrevProduct($_product);
+        $next_product = $xstore_helper->getNextProduct($_product);
+?>
+<?php if($prev_product || $next_product):?>
+<div class="prev-next-products">
+    <?php if($prev_product): ?>
+    <?php
+        $productImage = $_imagehelper->init($prev_product, 'category_page_grid')->constrainOnly(FALSE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->resize(90);
+        $productImageUrl = $productImage->getUrl();
+    ?>
+    <div class="product-nav product-prev">
+        <a href="<?php echo $prev_product->getProductUrl(); ?>" title="<?php echo __('Previous Product'); ?>">
+            <img class="product-image" src="<?php echo $productImageUrl; ?>" alt="<?php echo $productImage->getLabel(); ?>"/>
+        </a>
+        <div class="product-nav-detail">
+            <a href="<?php echo $prev_product->getProductUrl(); ?>" class="product-name" title="<?php echo __('Previous Product'); ?>"><?php echo $prev_product->getName(); ?></a>
+            <?php
+            if ($priceRender) {
+                echo $priceRender->render(
+                    'final_price',
+                    $prev_product,
+                    [
+                        'include_container' => true,
+                        'display_minimal_price' => true,
+                        'zone' => 'item_list',
+                        'list_category_page' => true
+                    ]
+                );
+            }
+            ?>
+        </div>
+    </div>
+    <?php endif; ?>
+    <?php if($next_product): ?>
+    <?php
+        $productImage = $_imagehelper->init($next_product, 'category_page_grid')->constrainOnly(FALSE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->resize(90);
+        $productImageUrl = $productImage->getUrl();
+    ?>
+    <div class="product-nav product-next">
+        <a href="<?php echo $next_product->getProductUrl(); ?>" title="<?php echo __('Next Product'); ?>">
+            <img class="product-image" src="<?php echo $productImageUrl; ?>" alt="<?php echo $productImage->getLabel(); ?>"/>
+        </a>
+        <div class="product-nav-detail">
+            <a href="<?php echo $next_product->getProductUrl(); ?>" class="product-name" title="<?php echo __('Next Product'); ?>"><?php echo $next_product->getName(); ?></a>
+            <?php
+            if ($priceRender) {
+                echo $priceRender->render(
+                    'final_price',
+                    $next_product,
+                    [
+                        'include_container' => true,
+                        'display_minimal_price' => true,
+                        'zone' => 'item_list',
+                        'list_category_page' => true
+                    ]
+                );
+            }
+            ?>
+        </div>
+    </div>
+    <?php endif; ?>
+</div>
+<?php endif; ?>
+<?php
+    }
+?>

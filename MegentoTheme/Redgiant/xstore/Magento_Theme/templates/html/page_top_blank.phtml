@@ -1,0 +1,13 @@
+<?php
+$_xstorehelper = $this->helper( 'Redgiant\Xstore\Helper\Data' );
+$page_title_page_top = $_xstorehelper->getConfig('xstore_settings/general/page_title_page_top');
+?>
+<?php if ($page_title_page_top): ?>
+<script type="text/javascript">
+    require([
+        'jquery'        
+    ], function ($) {
+    	$(".top-container").append($(".page-title-wrapper").detach());
+    });
+</script>
+<?php endif;?>

@@ -1,0 +1,66 @@
+<?php 
+    $_helper = $this->helper('Redgiant\Xstore\Helper\Data');
+    $footer = $_helper->getConfig("xstore_settings/footer");
+?>
+<footer class="page-footer">
+	<?php if ($footer['footer_top']): ?>
+    <div class="footer-top">
+		<?php
+            if (isset($footer['footer_top_custom']) && $footer['footer_top_custom']) {
+                $block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
+                if ($block) {
+                    $block->setBlockId($footer['footer_top_custom']);
+                }
+                if ($block) {
+                    echo $block->toHtml();
+                }
+            }
+        ?>
+    </div>
+	<?php endif; ?>
+    <?php if ($footer['footer_middle']): ?>
+    <div class="footer-middle">
+        <div class="container">
+            <div class="row">
+            <?php
+                for( $i = 1; $i <= 4; $i++ ){
+                    $area = 'footer_middle_column_'.$i;
+                    $type = $footer[$area];
+                    if( $type ){
+                        echo '<div class="col-lg-'.$footer[$area.'_size'].'">';
+                    }
+                    if( $type == 'custom' && $footer[$area.'_custom'] ){
+                        $block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
+                        if($block) {
+                            $block->setBlockId($footer[$area.'_custom']);
+                        }
+                        if($block){
+                            echo $block->toHtml();
+                        }
+                    }
+                    if( $type ){
+                        echo '</div>';
+                    }
+                }
+            ?>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+    <?php if ($footer['footer_bottom']): ?>
+    <div class="footer-bottom">
+        <?php
+            if (isset($footer['footer_bottom_custom']) && $footer['footer_bottom_custom']) {
+                $block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
+                if ($block) {
+                    $block->setBlockId($footer['footer_bottom_custom']);
+                }
+                if ($block) {
+                    echo $block->toHtml();
+                }
+            }
+        ?>
+    </div>
+    <?php endif; ?>
+</footer>
+<a href="javascript:void(0)" id="totop"><span class="et-icon et-up-arrow"></span></a>

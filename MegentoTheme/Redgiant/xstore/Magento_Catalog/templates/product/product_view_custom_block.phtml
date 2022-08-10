@@ -1,0 +1,135 @@
+<?php
+	$_helper = $this->helper('Redgiant\Xstore\Helper\Data');
+	$_product_helper = $this->helper('Magento\Catalog\Helper\Data');
+	
+	$product = $_product_helper->getProduct();
+
+	$product_page_type = $product->getData('xstore_product_page_layout');
+    if(!$product_page_type)
+        $product_page_type = $_helper->getConfig('xstore_settings/product/product_page_layout');
+    if(empty($product_page_type))
+        $product_page_type = 'default';
+    $current_page = $this->getRequest()->getFullActionName();
+?>
+<?php if($current_page != 'weltpixel_quickview_catalog_product_view'): ?>
+<?php if($product_page_type == 'default' || $product_page_type == 'small_image'): ?>
+<div class="product-page-side">
+<?php
+	$static_block = $_helper->getConfig('xstore_settings/product/content_cms_block');
+	if (isset($static_block) && $static_block) {
+		$block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
+		if ($block) {
+			$block->setBlockId($static_block);
+		}
+		if ($block) {
+			echo '<div class="xstore-custom-block">' . $block->toHtml() . '</div>';
+		}
+	}
+?>
+<script type="text/javascript">
+require([
+    'jquery'
+], function ($) {
+	$(document).ready(function(){
+		$(".product-page-side").prepend($(".block.upsell").detach());
+	});
+});
+</script>
+</div>
+<?php endif; ?>
+<?php if($product_page_type == 'fixed_image'): ?>
+<script type="text/javascript">
+require([
+    'jquery'
+], function ($) {
+	$(document).ready(function(){
+		$(".product-info-main").append($(".product.info.detailed").detach());
+
+		var product_image_box_top = 0;
+        var product_info_pos = $(".product-info-main").offset().top;
+        $(window).scroll(function(){
+            product_info_pos = $(".product-info-main").offset().top;
+            if($(window).innerWidth() >= 992) {
+                $(".product.media").each(function(){
+                    if(($(window).scrollTop() > product_info_pos - 50) && (product_info_pos + $(".product-info-main").outerHeight()) > ($(window).scrollTop() + $(this).outerHeight() + 50)) {
+                        product_image_box_top = $(window).scrollTop() - product_info_pos + 50;
+                        $(this).css('top',product_image_box_top + 'px');
+                    } else if ($(window).scrollTop() < product_info_pos || $(".product-info-main").outerHeight() < $(this).outerHeight()) {
+                        product_image_box_top = 0;
+                        $(this).css('top',product_image_box_top + 'px');
+                    } else {
+                    	product_image_box_top = $(".product-info-main").outerHeight() - $(this).outerHeight();
+                        $(this).css('top',product_image_box_top + 'px');
+                    }
+                });
+            } else {
+                product_image_box_top = 0;
+                $(".product.media").css('top',product_image_box_top + 'px');
+            }
+        });
+        $(window).resize(function(){
+            product_info_pos = $(".product-info-main").offset().top;
+            if($(window).innerWidth() >= 992) {
+                $(".product.media").each(function(){
+                    if(($(window).scrollTop() > product_info_pos - 50) && (product_info_pos + $(".product-info-main").outerHeight()) > ($(window).scrollTop() + $(this).outerHeight() + 50)) {
+                        product_image_box_top = $(window).scrollTop() - product_info_pos + 50;
+                        $(this).css('top',product_image_box_top + 'px');
+                    } else if ($(window).scrollTop() < product_info_pos || $(".product-info-main").outerHeight() < $(this).outerHeight()) {
+                        product_image_box_top = 0;
+                        $(this).css('top',product_image_box_top + 'px');
+                    } else {
+                    	product_image_box_top = $(".product-info-main").outerHeight() - $(this).outerHeight();
+                        $(this).css('top',product_image_box_top + 'px');
+                    }
+                });
+            } else {
+                product_image_box_top = 0;
+                $(".product.media").css('top',product_image_box_top + 'px');
+            }
+        });
+	});
+});
+</script>
+<?php endif; ?>
+<?php if($product_page_type == 'booking_design'): ?>
+<div class="product-info-main product-page-side">
+    <div class="product-page-side-inner">
+    </div>
+<script type="text/javascript">
+require([
+    'jquery'
+], function ($) {
+    $(document).ready(function(){
+        $(".product-info-main:not(.product-page-side) > *").each(function(){
+            if(!($(this).hasClass("page-title-wrapper") || $(this).hasClass("overview"))) {
+                $(".product-page-side > .product-page-side-inner").append($(this).detach());
+            }
+        });
+    });
+});
+</script>
+</div>
+<?php endif; ?>
+<?php if($product_page_type == 'center_fixed_image'): ?>
+<div class="product-info-main product-page-side">
+    <div class="product-page-side-inner">
+    </div>
+<script type="text/javascript">
+require([
+    'jquery'
+], function ($) {
+    $(document).ready(function(){
+        $(".product-info-main:not(.product-page-side)").prepend('<div class="product-info-main-inner"></div>');
+        $(".product-info-main:not(.product-page-side) > *:not(.product-info-main-inner)").each(function(){
+            if(!($(this).hasClass("page-title-wrapper") || $(this).hasClass("overview") || $(this).hasClass("product-info-price") || $(this).hasClass("product-reviews-summary"))) {
+                $(".product-page-side > .product-page-side-inner").append($(this).detach());
+            } else {
+                $(".product-info-main > .product-info-main-inner").append($(this).detach());
+            }
+        });
+    });
+});
+</script>
+</div>
+<?php endif; ?>
+<?php endif; ?>

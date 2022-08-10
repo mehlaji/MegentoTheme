@@ -1,0 +1,49 @@
+<?php
+/**
+ * Copyright © 2015 Ihor Vansach (ihor@magefan.com). All rights reserved.
+ * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ *
+ * Glory to Ukraine! Glory to the heroes!
+ */
+?>
+<?php
+/**
+ * Blog sidebar recent posts template
+ *
+ * @var $block \Magefan\Blog\Block\Sidebar\Recent
+ */
+?>
+<?php
+	$_postCollection = $block->getPostCollection();
+?>
+<div class="recent-posts post-slider swiper-wrapper ">
+<?php if ($_postCollection->count()) { ?>
+    <?php foreach ($_postCollection as $_post) { ?>
+    <?php
+        $post_date = $_post->getData("publish_time");
+    ?>
+    <div class="swiper-slide">
+        <div class="blog-post post-grid">
+            <?php
+                $post_date = $_post->getData("publish_time");
+            ?>
+            <?php if($post_image = $_post->getFeaturedImage()): ?>
+            <div class="post-image">
+                <img src="<?php echo $post_image; ?>" alt=""/>
+            </div>
+            <?php endif; ?>
+            <div class="post-detail">
+                <a class="post-item-link"
+                   href="<?php echo $_post->getPostUrl() ?>">
+                    <?php echo $block->escapeHtml($_post->getTitle()) ?>
+                </a>
+                <div class="meta-post">
+                    <div class="entry-date published updated"><?php echo date("F", strtotime($post_date)); ?> <?php echo date("d", strtotime($post_date)); ?>, <?php echo date("Y", strtotime($post_date)); ?></div>
+                </div>
+            </div>
+        </div>
+    </div>
+       
+    <?php } ?>
+<?php } ?>
+</div>

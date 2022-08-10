@@ -1,0 +1,53 @@
+<?php
+    $_helper = $this->helper('Redgiant\xstore\Helper\Data');
+    $contacts_config = $_helper->getConfig('xstore_settings/contacts');
+    $_infoblock2 = $contacts_config['infoblock2'];
+    $_type = (int)$contacts_config["contacts_type"];
+    
+?>
+
+<div class="contact-us-type<?php echo $_type; ?> contact-us-page">
+<?php if ($_type == 3 || $_type == 4 || $_type == 5):?>
+    <?php echo $this->getChildHtml('google_map')?>
+    <div class="container">
+        <?php echo $_helper->filterContent($_infoblock2); ?>        
+    </div>
+    <div class="container">
+        <?php echo $this->getChildHtml('contactForm')?>
+    </div>
+
+<?php elseif ($_type == 6):?>
+    <?php echo $this->getChildHtml('google_map')?>
+    <div class="container">
+        <div class="map-info">
+            <?php echo $_helper->filterContent($contacts_config['infoblock1']); ?>
+            <?php echo $this->getChildHtml('contactForm')?>
+        </div>        
+    </div>
+<?php elseif ($_type == 7):?>
+    <?php echo $this->getChildHtml('google_map')?>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 contact-info"><?php echo $_helper->filterContent($_infoblock2); ?></div>
+            <div class="col-md-9"><?php echo $this->getChildHtml('contactForm')?></div>
+        </div>
+    </div>
+<?php else:?>
+
+    <?php echo $this->getChildHtml('google_map')?>
+    <div class="container">
+        <div class="row">
+
+            <div class="col-md-6"><?php echo $this->getChildHtml('contactForm')?></div>
+            <div class="col-md-6 contact-info">
+                <?php echo $_helper->filterContent($_infoblock2); ?>
+            </div>
+
+        </div>
+    </div>
+
+
+<?php
+endif;
+?>
+</div>

@@ -1,0 +1,35 @@
+<?php
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $category = $objectManager->get('Magento\Framework\Registry')->registry('current_category'); //Get Current Category
+?>
+<?php if($category): ?>
+<?php 
+    $subcats = $category->getChildrenCategories();
+    $_helper = $this->helper('Magento\Catalog\Helper\Output');
+    if(count($subcats)>0){
+?>
+<div class="filter-options category-list">
+    <div class="filter-options-item active">
+        <div class="filter-options-title"><?php echo __('Category'); ?></div>
+        <div class="filter-options-content">
+            <ol class="items">
+                <?php foreach($subcats as $subcat){ ?>
+                    <li class="item">
+                        <a href="<?php echo $subcat->getUrl() ?>"><?php echo $subcat->getName() ?><span class="count"><?php echo $subcat->getProductCollection()->count() ?></span></a>
+                    </li>
+                <?php } ?>
+            </ol>
+        </div>
+    </div>
+</div>
+<script>
+    require([
+        'jquery'
+    ], function ($) {
+        $('.filter-options.category-list .filter-options-title').on('click', function(){
+            $(this).parent().toggleClass('active');
+        });
+    });
+</script>
+<?php } ?>
+<?php endif; ?>

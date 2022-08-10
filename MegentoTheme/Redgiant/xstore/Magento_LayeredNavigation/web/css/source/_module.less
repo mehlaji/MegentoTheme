@@ -1,0 +1,313 @@
+// /**
+//  * Copyright © Magento, Inc. All rights reserved.
+//  * See COPYING.txt for license details.
+//  */
+
+//
+//  Common
+//  _____________________________________________
+
+& when (@media-common = true) {
+
+    .block.filter {
+        margin-bottom: @indent__xl;
+
+        .filter-title {
+            margin-bottom: @indent__base;
+            display: none;
+
+            strong {
+                font-size: 14px;
+                font-weight: 400;
+                text-transform: uppercase;
+
+                &:before {
+                    content: '\e934';
+                    display: inline-block;
+                    font-family: 'xstore-icons';
+                    line-height: 1;
+                    padding: 4px;
+                    margin-right: 10px;
+                    font-size: 14px;
+                    -webkit-transition: all .2s ease-out;
+                    transition: all .2s ease-out;
+                }
+            }
+        }
+        &.active {
+            .filter-title strong:before {
+                transform: rotateX(180deg);
+            }
+        }
+    }
+    .page-layout-1column {
+        .block.filter .filter-title {
+            display: block;
+        }
+    }
+    .block-subtitle {
+        display: none;
+        margin-bottom: 20px;
+        font-size: 14px;
+        font-weight: 400;
+        text-transform: uppercase;
+        padding-bottom: 14px;
+    }
+
+    .filter-current {
+        .block-subtitle {
+            display: block;
+            border-bottom: 1px solid #e1e1e1;
+        }
+        .item {
+            margin-bottom: @indent__s;
+            position: relative;
+            position: relative;
+            display: flex;
+
+            .action.remove {
+                position: absolute;
+                font-size: 0;
+                right: 0;
+                &:before {
+                    font-family: 'xstore-icons';
+                    display: inline-block;
+                    color: #222;
+                    content: "\e90a";
+                    font-size: 10px;
+                }
+            }
+        }
+        .filter-value {
+            color: #777;
+        }
+        .filter-label {
+            font-weight: 400;
+            text-transform: uppercase;
+            margin-right: 10px;
+
+            &:after {
+                content: ':';
+            }
+        }
+
+        + .filter-actions {
+            margin-bottom: 54px;
+            text-align: right;
+            text-transform: uppercase;
+        }
+    }
+
+    .filter-options-content {
+        overflow-y: auto;
+        overflow-x: hidden;
+        max-height: 250px;
+        .filter-count-label {
+            &:extend(.abs-visually-hidden all);
+        }
+    }
+
+    .filter-options {
+        margin: 0;
+
+        .filter-options-title {
+            position: relative;
+            cursor: pointer;
+            word-break: break-all;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 15px;
+            text-transform: uppercase;
+            color: #222222;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #e1e1e1;
+            &:after {
+                content: '\e910';
+                font-family: 'xstore-icons';
+                cursor: pointer;
+                position: absolute;
+                bottom: 11px;
+                right: 0;
+                line-height: 1;
+                padding: 4px;
+                border: 1px solid #e1e1e1;
+                font-size: 8px;
+                -webkit-transition: all 0.2s ease-out;
+                transition: all 0.2s ease-out;
+            }
+            &:hover {
+                &:after {
+                    border-color: #888;
+                }
+            }
+        }
+        .filter-options-item {
+            margin-bottom: 20px;
+            &[attribute ^="price"] {
+                .item {
+                    display: none;
+                    &:first-child {
+                        display: block;
+                    }
+                }
+            }
+            &.active {
+                margin-bottom: 54px;
+                
+                .filter-options-title:after {
+                    content: '\e912';
+                }
+            }
+        }
+
+        .filter-options-content {
+            .item {
+                margin-bottom: 3px;
+
+                a {
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: #888888;
+                    font-size: 16px;
+                    line-height: 23px;
+                    padding: 6px 0;
+                    width: ~'calc(100% - 40px)';
+                    &:hover {
+                        color: #222222;
+                    }
+                }
+            }
+            &::-webkit-scrollbar {
+                width: 2px; 
+            }
+            &::-webkit-scrollbar-track {
+                -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+                box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            }
+            &::-webkit-scrollbar-thumb {
+                background-color: #222;
+                outline: 2px solid #222;
+            }
+        }
+
+        &.category-list {
+            .filter-options-content .item a {
+                display: inline-flex;
+                width: 100%;
+                .count {
+                    margin-left: auto;
+                    margin-right: 20px;
+                }
+            }
+        }
+
+        .count {
+            color: #888;
+            padding-left: 3px;
+            &:before {
+                content: '(';
+            }
+
+            &:after {
+                content: ')';
+            }
+        }
+        input[type="checkbox"] {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border: 1px solid #e1e1e1;
+            display: inline-flex;
+            vertical-align: middle;
+            align-items: center;
+            justify-content: center;
+            margin-right: 5px;
+            outline: none;
+            &:checked {
+                + a {
+                    color: #c62828 !important;
+                }
+                &:before {
+                    content: "\e918";
+                    font-family: 'xstore-icons';
+                    font-weight: 400;
+                    font-size: 10px;
+                    color: #222;
+                    display: block;
+                }
+            }
+            &:focus {
+                outline: none;
+                box-shadow: none;
+            }
+        }
+    }
+
+    .items {
+        &:extend(.abs-reset-list all);
+    }
+
+    .filtered {
+        .items {
+            margin: 15px 0;
+        }
+
+        .item {
+            margin-bottom: 6px;
+            padding-left: 22px;
+            position: relative;
+
+            .label {
+                font-weight: @font-weight__bold;
+            }
+
+            .action.remove {
+                &:extend(.abs-remove-button-for-blocks all);
+                left: -6px;
+                position: absolute;
+                top: 0;
+            }
+        }
+
+        & + .actions {
+            margin-bottom: 35px;
+        }
+    }
+}
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+    .page-layout-1column {
+        .block.filter {
+            .filter-options {
+                display: flex;
+                flex-wrap: wrap;
+                margin: 0 -15px;
+                .filter-options-item {
+                    padding: 0 15px;
+                    flex: 0 0 25%;
+                    &.active {
+                        margin-bottom: 20px;
+                    }
+                }
+            }
+            .filter-title {
+                display: inline-block;
+                cursor: pointer;
+                padding: 4px 0;
+            }
+        }
+    }
+}
+//
+//  Mobile
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
+    .page-with-filter {
+        .columns {
+            .sidebar-main {
+                .lib-vendor-prefix-order(0);
+            }
+        }
+    }
+}

@@ -1,0 +1,7 @@
+<?php 
+    $_helper = $this->helper('Redgiant\Xstore\Helper\Data');
+?>
+<div class="login-popup">    
+    <?php echo $this->getChildHtml('customer_form_login_popup'); ?>
+	<p class="text-center"><?php echo __('New client'); ?> <a href="<?php echo $_helper->getBaseLinkUrl(). 'customer/account/create/' ?>" class="register-link"><?php echo __('Register'); ?> ?</a></p>
+</div>

@@ -1,0 +1,181 @@
+// /**
+//  * Copyright © Magento, Inc. All rights reserved.
+//  * See COPYING.txt for license details.
+//  */
+
+//
+//  Common
+//  _____________________________________________
+
+& when (@media-common = true) {
+    .product.data.items {
+        .lib-data-accordion();
+        text-align: center;
+
+        > .item.content {
+            text-align: left;
+        }
+
+        > .item.title {
+            &:not(.disabled)>.switch:active, &.active>.switch, &.active>.switch:focus, &.active>.switch:hover {
+                padding-bottom: 6px;
+            }
+        }
+    }
+
+    #tab-label-reviews-title > span.counter {
+        &:after {
+            content: ')';
+        }
+
+        &:before {
+            content: '(';
+        }
+    }
+}
+
+//
+//  Desktop
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+    .product.data.items {
+        .lib-data-tabs();
+
+        > .item.title {
+            float: none;
+            width: auto;
+            display: inline-block;
+            vertical-align: middle;
+
+            > .switch {
+                background: transparent;
+                border: 0;
+                height: auto;
+                color: #222;
+                font-size: 14px;
+                font-weight: 400;
+                text-transform: uppercase;
+                padding: 6px 10px;
+            }
+
+            &:not(.active) {
+                > .switch {
+                    &:hover {
+                        color: #888;
+                        background: transparent;
+                    }
+                }
+            }
+
+            &.active {
+                > .switch {
+                    &, &:hover, &:focus {
+                        color: #c62828;
+                    }
+                }
+            }
+        }
+
+        > .item.content {
+            margin-top: 40px;
+            padding: 20px 0;
+        }
+    }
+
+    .product-page-layout-fixed-image, .product-page-layout-fixed_image {
+        .product.data.items {
+            border-bottom: 1px solid #e1e1e1;
+
+            > .item.title {
+                display: block;
+                border-top: 1px solid #e1e1e1;
+                padding: 8px 0;
+                text-align: left;
+                margin-right: 0;
+
+                > .switch {
+                    padding-left: 0;
+                    padding-right: 0;
+                    position: relative;
+
+                    &:after {
+                        content: "\e905";
+                        font-family: 'xstore-icons';
+                        display: block;
+                        width: 30px;
+                        line-height: 30px;
+                        text-align: center;
+                        position: absolute;
+                        right: 0;
+                        top: 0;
+                    }
+                }
+
+                &.active > .switch:after {
+                    content: "\e903";
+                }
+            }
+
+            > .item.content {
+                float: none;
+                margin: 0;
+            }
+        }
+    }
+}
+
+//
+//  Mobile
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
+    .product.data.items {
+        .lib-data-accordion();
+        > .item.content {
+            border: 0;
+        }
+        > .item.title {
+            > .switch {
+                border: 0;
+                border-bottom: 1px solid #e1e1e1;
+                background: transparent;
+                height: auto;
+                font-size: 14px;
+                font-weight: 400;
+                text-transform: uppercase;
+                text-align: left;
+                position: relative;
+
+                &, &:visited, &:hover {
+                    color: #222;
+                }
+
+                &:after {
+                    content: "\e905";
+                    font-family: 'xstore-icons';
+                    display: block;
+                    width: 30px;
+                    line-height: 30px;
+                    text-align: center;
+                    position: absolute;
+                    right: 0;
+                    top: 10px;
+                }
+            }
+
+            &.active {
+                > .switch {
+                    color: #c62828;
+
+                    &:after {
+                        content: "\e903";
+                    }
+                }
+            }
+        }
+        .data.item {
+            display: block;
+        }
+    }
+}

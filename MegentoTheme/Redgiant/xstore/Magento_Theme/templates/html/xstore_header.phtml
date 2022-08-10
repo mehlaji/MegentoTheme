@@ -1,0 +1,674 @@
+<?php 
+    $_helper = $this->helper('Redgiant\Xstore\Helper\Data');
+    $header_type = $_helper->getConfig('xstore_settings/header/header_type');
+    $notice_block = $_helper->getConfig('xstore_settings/header/notice_block');
+	$notice_block_id = $_helper->getConfig('xstore_settings/header/notice_static_block');
+	$static_block_custom_menu = $_helper->getConfig('xstore_settings/header/static_block_custom_menu');
+	$static_block = $_helper->getConfig('xstore_settings/header/static_block');
+?>
+<?php if($notice_block && $notice_block == 'above_header' && $notice_block_id): ?>
+<div class="xstore-notice-block">
+	<?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId($notice_block_id)->toHtml(); ?>
+</div>
+<?php endif; ?>
+<header class="page-header container-fluid type<?php echo $header_type; ?>">
+	<?php if($header_type == 1): ?>
+		<div class="top-bar">
+			<div class="container">
+				<div class="top-bar-left">
+					<?php echo $this->getChildHtml("store_language"); ?>
+					<?php echo $this->getChildHtml("currency"); ?>
+					<?php
+			    		$static_block_top_links = $_helper->getConfig('xstore_settings/header/static_block_top_links');
+			            if (isset($static_block_top_links) && $static_block_top_links) {
+			                $block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
+			                if ($block) {
+			                    $block->setBlockId($static_block_top_links);
+			                }
+			                if ($block) {
+			                    echo '<div class="xstore-custom-block">' . $block->toHtml() . '</div>';
+			                }
+			            }
+			        ?>
+			    </div>
+			    <div class="top-bar-right">
+					<?php echo $this->getChildHtml("header.links"); ?>
+					<?php
+			    		$social_link_block = $_helper->getConfig('xstore_settings/header/social_link_block');
+			            if (isset($social_link_block) && $social_link_block) {
+			                $block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
+			                if ($block) {
+			                    $block->setBlockId($social_link_block);
+			                }
+			                if ($block) {
+			                    echo '<div class="social-link-block">' . $block->toHtml() . '</div>';
+			                }
+			            }
+			        ?>
+				</div>
+			</div>
+		</div>
+		<div class="header-main">
+			<div class="container">	
+				<div class="header-main-wrapper">
+					<?php echo $this->getChildHtml("logo"); ?>
+					<div class="menu-wrapper">
+						<span data-action="toggle-nav" class="action nav-toggle"><span></span></span>
+						<?php echo $this->getChildHtml("navigation.sections"); ?>
+						<div class="search-area">
+						    <a href="javascript:void(0)"><i class="et-icon et-zoom"></i></a>
+							<?php echo $this->getChildHtml("top.search"); ?>
+						</div>
+					</div>
+					<div class="header-right">
+						<ul class="authorization-links">
+				    		<?php echo $this->getChildHtml("authorization-link-login"); ?>
+				    	</ul>
+				    	<a href="<?php echo $_helper->getBaseLinkUrl(). 'wishlist' ?>" class="action my-wishlist" title="My Wish List" role="button"><i class="et-icon et-heart"></i></a>
+				    	<?php echo $this->getChildHtml("minicart"); ?>
+			    	</div>
+			    </div>
+		    </div>
+		</div>
+	<?php elseif($header_type == 2): ?>
+		<div class="top-bar">
+			<div class="container">
+				<div class="top-bar-left">
+					<?php echo $this->getChildHtml("store_language"); ?>
+					<?php echo $this->getChildHtml("currency"); ?>
+					<?php
+						$static_block_top_links = $_helper->getConfig('xstore_settings/header/static_block_top_links');
+						if (isset($static_block_top_links) && $static_block_top_links) {
+							$block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
+							if ($block) {
+								$block->setBlockId($static_block_top_links);
+							}
+							if ($block) {
+								echo '<div class="xstore-custom-block">' . $block->toHtml() . '</div>';
+							}
+						}
+					?>
+				</div>
+				<div class="top-bar-right">
+					<?php echo $this->getChildHtml("header.links"); ?>
+					<?php
+						$social_link_block = $_helper->getConfig('xstore_settings/header/social_link_block');
+						if (isset($social_link_block) && $social_link_block) {
+							$block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
+							if ($block) {
+								$block->setBlockId($social_link_block);
+							}
+							if ($block) {
+								echo '<div class="social-link-block">' . $block->toHtml() . '</div>';
+							}
+						}
+					?>
+				</div>
+			</div>
+		</div>
+		<div class="header-main">
+			<div class="container">	
+				<div class="header-main-wrapper">
+					<div class="menu-toggle-wrapper"><span data-action="toggle-nav" class="action nav-toggle"><span></span></span></div>
+					<?php echo $this->getChildHtml("logo"); ?>
+					<div class="search-area">
+						<?php if(!empty($static_block)): ?>
+							<div class="header-custom-widgets">
+								<?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId($static_block)->toHtml(); ?>
+							</div>
+						<?php endif; ?>
+						<a href="javascript:void(0)"><i class="et-icon et-zoom"></i></a>
+						<?php echo $this->getChildHtml("top.search"); ?>
+					</div>
+					<div class="header-right">
+						<ul class="authorization-links">
+							<?php echo $this->getChildHtml("authorization-link-login"); ?>
+						</ul>
+						<a href="<?php echo $_helper->getBaseLinkUrl(). 'wishlist' ?>" class="action my-wishlist" title="My Wish List" role="button"><i class="et-icon et-heart"></i></a>
+						<?php echo $this->getChildHtml("minicart"); ?>
+					</div>
+				</div>
+				<div class="menu-wrapper">
+					<div class="container">
+						<div class="secondary-menu-wrapper">
+							<div class="secondary-menu-title"><div class="open-children-toggle"></div><span><?php echo __('All Departments') ?></span></div>
+							<?php echo $this->getChildHtml("navigation.sections"); ?>
+						</div>
+						<div class="primary-menu-wrapper">
+							<?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId($static_block_custom_menu)->toHtml(); ?>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	<?php elseif($header_type == 3): ?>
+		<?php if(!empty($static_block)): ?>
+			<div class="top-panel-container">
+				<?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId($static_block)->toHtml(); ?>
+			</div>
+		<?php endif; ?>
+		<div class="top-bar">
+			<div class="container">
+				<div class="top-bar-left">
+					<?php echo $this->getChildHtml("store_language"); ?>
+					<?php echo $this->getChildHtml("currency"); ?>
+					<?php
+			    		$static_block_top_links = $_helper->getConfig('xstore_settings/header/static_block_top_links');
+			            if (isset($static_block_top_links) && $static_block_top_links) {
+			                $block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
+			                if ($block) {
+			                    $block->setBlockId($static_block_top_links);
+			                }
+			                if ($block) {
+			                    echo '<div class="xstore-custom-block">' . $block->toHtml() . '</div>';
+			                }
+			            }
+			        ?>
+				</div>
+				<?php if(!empty($static_block)): ?>
+					<div class="top-panel-open">
+						<span class="panel-tooltip">Open panel</span>
+						<a href="javascript:void(0);" class="top-panel-opener"></a>
+					</div>
+				<?php endif; ?>
+			    <div class="top-bar-right">
+					<?php echo $this->getChildHtml("header.links"); ?>
+					<?php
+			    		$social_link_block = $_helper->getConfig('xstore_settings/header/social_link_block');
+			            if (isset($social_link_block) && $social_link_block) {
+			                $block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
+			                if ($block) {
+			                    $block->setBlockId($social_link_block);
+			                }
+			                if ($block) {
+			                    echo '<div class="social-link-block">' . $block->toHtml() . '</div>';
+			                }
+			            }
+			        ?>
+				</div>
+			</div>
+		</div>
+		<div class="header-main">
+			<div class="container">	
+				<div class="header-main-wrapper">
+					<div class="menu-toggle-wrapper"><span data-action="toggle-nav" class="action nav-toggle"><span></span></span></div>
+					<?php echo $this->getChildHtml("logo"); ?>
+					<div class="search-area">
+						<a href="javascript:void(0)"><i class="et-icon et-zoom"></i></a>
+						<?php echo $this->getChildHtml("top.search"); ?>
+					</div>
+					<div class="header-right">
+						<ul class="authorization-links">
+				    		<?php echo $this->getChildHtml("authorization-link-login"); ?>
+				    	</ul>
+				    	<a href="<?php echo $_helper->getBaseLinkUrl(). 'wishlist' ?>" class="action my-wishlist" title="My Wish List" role="button"><i class="et-icon et-heart"></i></a>
+				    	<?php echo $this->getChildHtml("minicart"); ?>
+			    	</div>
+				</div>
+				<div class="menu-wrapper">
+					<?php echo $this->getChildHtml("navigation.sections"); ?>
+				</div>
+		    </div>
+		</div>
+		<?php elseif($header_type == 4): ?>
+		<?php if(!empty($static_block)): ?>
+			<div class="top-panel-container">
+				<?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId($static_block)->toHtml(); ?>
+			</div>
+		<?php endif; ?>
+		<div class="top-bar">
+			<div class="top-bar-left">
+				<?php echo $this->getChildHtml("store_language"); ?>
+				<?php echo $this->getChildHtml("currency"); ?>
+				<?php
+					$static_block_top_links = $_helper->getConfig('xstore_settings/header/static_block_top_links');
+					if (isset($static_block_top_links) && $static_block_top_links) {
+						$block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
+						if ($block) {
+							$block->setBlockId($static_block_top_links);
+						}
+						if ($block) {
+							echo '<div class="xstore-custom-block">' . $block->toHtml() . '</div>';
+						}
+					}
+				?>
+			</div>
+			<?php if(!empty($static_block)): ?>
+				<div class="top-panel-open">
+					<span class="panel-tooltip">Open panel</span>
+					<a href="javascript:void(0);" class="top-panel-opener"></a>
+				</div>
+			<?php endif; ?>
+			<div class="top-bar-right">
+				<?php echo $this->getChildHtml("header.links"); ?>
+				<?php
+					$social_link_block = $_helper->getConfig('xstore_settings/header/social_link_block');
+					if (isset($social_link_block) && $social_link_block) {
+						$block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
+						if ($block) {
+							$block->setBlockId($social_link_block);
+						}
+						if ($block) {
+							echo '<div class="social-link-block">' . $block->toHtml() . '</div>';
+						}
+					}
+				?>
+			</div>
+		</div>
+		<div class="header-main">
+			<div class="container">	
+				<div class="header-main-wrapper">
+					<?php echo $this->getChildHtml("logo"); ?>
+					<div class="menu-wrapper">
+						<span data-action="toggle-nav" class="action nav-toggle"><span></span></span>
+						<?php echo $this->getChildHtml("navigation.sections"); ?>
+					</div>
+					<div class="header-right">
+						<div class="search-area">
+						    <a href="javascript:void(0)"><i class="et-icon et-zoom"></i></a>
+							<?php echo $this->getChildHtml("top.search"); ?>
+						</div>
+						<ul class="authorization-links">
+				    		<?php echo $this->getChildHtml("authorization-link-login"); ?>
+				    	</ul>
+				    	<a href="<?php echo $_helper->getBaseLinkUrl(). 'wishlist' ?>" class="action my-wishlist" title="My Wish List" role="button"><i class="et-icon et-heart"></i></a>
+				    	<?php echo $this->getChildHtml("minicart"); ?>
+			    	</div>
+			    </div>
+		    </div>
+		</div>
+		<?php elseif($header_type == 5): ?>
+		<div class="top-bar">
+			<div class="container">
+				<div class="top-bar-left">
+					<?php echo $this->getChildHtml("store_language"); ?>
+					<?php echo $this->getChildHtml("currency"); ?>
+					<?php
+			    		$static_block_top_links = $_helper->getConfig('xstore_settings/header/static_block_top_links');
+			            if (isset($static_block_top_links) && $static_block_top_links) {
+			                $block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
+			                if ($block) {
+			                    $block->setBlockId($static_block_top_links);
+			                }
+			                if ($block) {
+			                    echo '<div class="xstore-custom-block">' . $block->toHtml() . '</div>';
+			                }
+			            }
+			        ?>
+			    </div>
+			    <div class="top-bar-right">
+					<?php echo $this->getChildHtml("header.links"); ?>
+					<?php
+			    		$social_link_block = $_helper->getConfig('xstore_settings/header/social_link_block');
+			            if (isset($social_link_block) && $social_link_block) {
+			                $block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
+			                if ($block) {
+			                    $block->setBlockId($social_link_block);
+			                }
+			                if ($block) {
+			                    echo '<div class="social-link-block">' . $block->toHtml() . '</div>';
+			                }
+			            }
+			        ?>
+				</div>
+			</div>
+		</div>
+		<div class="header-main">
+			<div class="container">	
+				<div class="header-main-wrapper">
+					<div class="menu-toggle-wrapper"><span data-action="toggle-nav" class="action nav-toggle"><span></span></span></div>
+					<?php echo $this->getChildHtml("logo"); ?>
+					<div class="search-area">
+						<a href="javascript:void(0)"><i class="et-icon et-zoom"></i></a>
+						<?php echo $this->getChildHtml("top.search"); ?>
+					</div>
+					<?php if(!empty($static_block)): ?>
+						<div class="header-custom-widgets">
+							<?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId($static_block)->toHtml(); ?>
+						</div>
+					<?php endif; ?>
+					<div class="header-right">
+						<ul class="authorization-links">
+				    		<?php echo $this->getChildHtml("authorization-link-login"); ?>
+				    	</ul>
+				    	<a href="<?php echo $_helper->getBaseLinkUrl(). 'wishlist' ?>" class="action my-wishlist" title="My Wish List" role="button"><i class="et-icon et-heart"></i></a>
+				    	<?php echo $this->getChildHtml("minicart"); ?>
+			    	</div>
+				</div>
+				<div class="menu-wrapper">
+					<?php echo $this->getChildHtml("navigation.sections"); ?>
+				</div>
+		    </div>
+		</div>	
+		<?php elseif($header_type == 6): ?>
+		<div class="top-bar">
+			<div class="container">
+				<div class="top-bar-left">
+					<?php echo $this->getChildHtml("store_language"); ?>
+					<?php echo $this->getChildHtml("currency"); ?>
+					<?php
+			    		$static_block_top_links = $_helper->getConfig('xstore_settings/header/static_block_top_links');
+			            if (isset($static_block_top_links) && $static_block_top_links) {
+			                $block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
+			                if ($block) {
+			                    $block->setBlockId($static_block_top_links);
+			                }
+			                if ($block) {
+			                    echo '<div class="xstore-custom-block">' . $block->toHtml() . '</div>';
+			                }
+			            }
+			        ?>
+			    </div>
+			    <div class="top-bar-right">
+					<?php echo $this->getChildHtml("header.links"); ?>
+					<div class="search-area">
+						<a href="javascript:void(0)"><i class="et-icon et-zoom"></i></a>
+						<?php echo $this->getChildHtml("top.search"); ?>
+					</div>
+
+					<ul class="authorization-links">
+						<?php echo $this->getChildHtml("authorization-link-login"); ?>
+					</ul>
+					<a href="<?php echo $_helper->getBaseLinkUrl(). 'wishlist' ?>" class="action my-wishlist" title="My Wish List" role="button"><i class="et-icon et-heart"></i></a>
+					<?php echo $this->getChildHtml("minicart"); ?>
+				</div>
+			</div>
+		</div>
+		<div class="header-main">
+			<div class="container">	
+				<div class="header-main-wrapper">
+					<?php echo $this->getChildHtml("logo"); ?>
+					<div class="menu-wrapper">
+						<span data-action="toggle-nav" class="action nav-toggle"><span></span></span>
+						<?php echo $this->getChildHtml("navigation.sections"); ?>						
+					</div>					
+			    </div>
+		    </div>
+		</div>
+
+<?php elseif($header_type == 7): ?>		
+		<div class="header-main">
+			<div class="top-main">
+				<div class="container">
+					<div class="top-main-left">
+						<?php echo $this->getChildHtml("store_language"); ?>
+						<?php echo $this->getChildHtml("currency"); ?>					
+					</div>
+
+					<?php echo $this->getChildHtml("logo"); ?>
+
+					<div class="top-main-right">
+						<?php echo $this->getChildHtml("header.links"); ?>
+						<?php
+							$social_link_block = $_helper->getConfig('xstore_settings/header/social_link_block');
+							if (isset($social_link_block) && $social_link_block) {
+								$block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
+								if ($block) {
+									$block->setBlockId($social_link_block);
+								}
+								if ($block) {
+									echo '<div class="social-link-block">' . $block->toHtml() . '</div>';
+								}
+							}
+						?>
+					</div>
+				</div>		
+			</div>
+			<div class="container">
+				<div class="header-main-wrapper">
+					<?php echo $this->getChildHtml("logo"); ?>
+					<div class="menu-wrapper">
+						<span data-action="toggle-nav" class="action nav-toggle"><span></span></span>
+						<?php echo $this->getChildHtml("navigation.sections"); ?>						
+					</div>
+
+					<div class="search-area">
+						<a href="javascript:void(0)"><i class="et-icon et-zoom"></i></a>
+						<?php echo $this->getChildHtml("top.search"); ?>
+					</div>
+
+					<div class="header-right">						
+						<ul class="authorization-links">
+				    		<?php echo $this->getChildHtml("authorization-link-login"); ?>
+				    	</ul>
+				    	<a href="<?php echo $_helper->getBaseLinkUrl(). 'wishlist' ?>" class="action my-wishlist" title="My Wish List" role="button"><i class="et-icon et-heart"></i></a>
+				    	<?php echo $this->getChildHtml("minicart"); ?>
+			    	</div>
+			    </div>
+		    </div>
+		</div>
+
+<?php elseif($header_type == 8): ?>		
+<div class="top-bar">
+			<div class="container">
+				<div class="top-bar-left">
+					<?php echo $this->getChildHtml("store_language"); ?>
+					<?php echo $this->getChildHtml("currency"); ?>
+					<?php
+			    		$static_block_top_links = $_helper->getConfig('xstore_settings/header/static_block_top_links');
+			            if (isset($static_block_top_links) && $static_block_top_links) {
+			                $block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
+			                if ($block) {
+			                    $block->setBlockId($static_block_top_links);
+			                }
+			                if ($block) {
+			                    echo '<div class="xstore-custom-block">' . $block->toHtml() . '</div>';
+			                }
+			            }
+			        ?>
+			    </div>
+			    <div class="top-bar-right">
+					<?php echo $this->getChildHtml("header.links"); ?>
+					<div class="search-area">
+						<a href="javascript:void(0)"><i class="et-icon et-zoom"></i></a>
+						<?php echo $this->getChildHtml("top.search"); ?>
+					</div>
+
+					<ul class="authorization-links">
+						<?php echo $this->getChildHtml("authorization-link-login"); ?>
+					</ul>
+					<a href="<?php echo $_helper->getBaseLinkUrl(). 'wishlist' ?>" class="action my-wishlist" title="My Wish List" role="button"><i class="et-icon et-heart"></i></a>
+				</div>
+			</div>
+		</div>
+		<div class="header-main">
+			<div class="container">	
+				<div class="header-main-wrapper">
+					<?php echo $this->getChildHtml("logo"); ?>
+					<div class="menu-wrapper">
+						<span data-action="toggle-nav" class="action nav-toggle"><span></span></span>
+						<?php echo $this->getChildHtml("navigation.sections"); ?>												
+					</div>
+					<?php echo $this->getChildHtml("minicart"); ?>
+			    </div>
+		    </div>
+		</div>
+
+	<?php elseif($header_type == 9): ?>
+		<div class="top-bar">
+			<div class="container">
+				<div class="top-bar-left">
+					<?php echo $this->getChildHtml("store_language"); ?>
+					<?php echo $this->getChildHtml("currency"); ?>
+					<?php
+						$static_block_top_links = $_helper->getConfig('xstore_settings/header/static_block_top_links');
+						if (isset($static_block_top_links) && $static_block_top_links) {
+							$block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
+							if ($block) {
+								$block->setBlockId($static_block_top_links);
+							}
+							if ($block) {
+								echo '<div class="xstore-custom-block">' . $block->toHtml() . '</div>';
+							}
+						}
+					?>
+				</div>
+				<div class="top-bar-right">
+					<?php echo $this->getChildHtml("header.links"); ?>
+					<?php
+						$social_link_block = $_helper->getConfig('xstore_settings/header/social_link_block');
+						if (isset($social_link_block) && $social_link_block) {
+							$block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
+							if ($block) {
+								$block->setBlockId($social_link_block);
+							}
+							if ($block) {
+								echo '<div class="social-link-block">' . $block->toHtml() . '</div>';
+							}
+						}
+					?>
+				</div>
+			</div>
+		</div>
+		<div class="header-main">			
+			<div class="header-main-wrapper">
+				<div class="container">
+					<div class="menu-toggle-wrapper"><span data-action="toggle-nav" class="action nav-toggle"><span></span></span></div>
+					<?php echo $this->getChildHtml("logo"); ?>
+					<div class="search-area">						
+						<a href="javascript:void(0)"><i class="et-icon et-zoom"></i></a>
+						<?php echo $this->getChildHtml("top.search"); ?>
+					</div>
+					<div class="header-right">
+						<ul class="authorization-links">
+							<?php echo $this->getChildHtml("authorization-link-login"); ?>
+						</ul>
+						<a href="<?php echo $_helper->getBaseLinkUrl(). 'wishlist' ?>" class="action my-wishlist" title="My Wish List" role="button"><i class="et-icon et-heart"></i></a>
+						<?php echo $this->getChildHtml("minicart"); ?>
+					</div>
+				</div>
+			</div>
+			<div class="menu-wrapper">
+				<div class="container">
+					<span data-action="toggle-nav" class="action nav-toggle"><span></span></span>
+					<?php echo $this->getChildHtml("navigation.sections"); ?>
+				</div>
+			</div>
+		</div>
+	<?php elseif($header_type == 10): ?>
+		<div class="top-bar">
+			<div class="container">	
+				<?php echo $this->getChildHtml("header.links"); ?>
+			</div>
+		</div>
+		<div class="header-main">
+			<div class="container">	
+				<div class="header-main-wrapper">
+					<?php echo $this->getChildHtml("logo"); ?>
+					<div class="menu-wrapper">
+						<span data-action="toggle-nav" class="action nav-toggle"><span></span></span>
+						<?php echo $this->getChildHtml("navigation.sections"); ?>
+					</div>
+					<div class="header-right">
+						<div class="search-area">
+							<a href="javascript:void(0)"><i class="et-icon et-zoom"></i></a>
+							<?php echo $this->getChildHtml("top.search"); ?>
+						</div>
+						<ul class="authorization-links">
+							<?php echo $this->getChildHtml("authorization-link-login"); ?>
+						</ul>
+						<a href="<?php echo $_helper->getBaseLinkUrl(). 'wishlist' ?>" class="action my-wishlist" title="My Wish List" role="button"><i class="et-icon et-heart"></i></a>
+						<?php echo $this->getChildHtml("minicart"); ?>
+					</div>
+				</div>
+			</div>
+		</div>
+	<?php elseif($header_type == 11): ?>
+		<div class="top-bar">
+			<div class="container">	
+				<?php echo $this->getChildHtml("header.links"); ?>
+			</div>
+		</div>
+		<div class="header-main">
+			<div class="container">
+				<div class="header-main-wrapper">
+					<span data-action="toggle-nav" class="action nav-toggle"><span></span></span>
+					<?php echo $this->getChildHtml("logo"); ?>
+					<div class="header-right">
+						<?php echo $this->getChildHtml("minicart"); ?>
+						<a href="javascript:void(0)" class="menu-link"><i class="et-icon et-burger"></i></a>
+						<div class="menu-wrapper">
+							<a href="javascript:void(0)" class="menu-close"><i class="et-icon et-delete"></i></a>
+							<?php echo $this->getChildHtml("navigation.sections"); ?>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+		require([
+            'jquery'
+        ], function ($) {
+        	$(".page-header.type11 a.menu-link").click(function(){
+        		$(".page-header.type11 .header-main .menu-wrapper").addClass("show");
+        	});
+        	$(".page-header.type11 .header-main .menu-wrapper > a.menu-close").click(function(){
+        		$(".page-header.type11 .header-main .menu-wrapper").removeClass("show");
+        	});
+        });
+		</script>
+	<?php elseif($header_type == 12): ?>
+		<div class="top-bar">
+			<div class="top-bar-left">
+				<?php echo $this->getChildHtml("header.links"); ?>
+			</div>
+			<div class="top-bar-center">
+				<?php
+					$static_block_top_links = $_helper->getConfig('xstore_settings/header/static_block_top_links');
+					if (isset($static_block_top_links) && $static_block_top_links) {
+						$block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
+						if ($block) {
+							$block->setBlockId($static_block_top_links);
+						}
+						if ($block) {
+							echo '<div class="xstore-custom-block">' . $block->toHtml() . '</div>';
+						}
+					}
+				?>	
+			</div>
+			<div class="top-bar-right">
+				<?php echo $this->getChildHtml("store_language"); ?>
+				<?php echo $this->getChildHtml("currency"); ?>
+				<?php
+					$social_link_block = $_helper->getConfig('xstore_settings/header/social_link_block');
+					if (isset($social_link_block) && $social_link_block) {
+						$block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
+						if ($block) {
+							$block->setBlockId($social_link_block);
+						}
+						if ($block) {
+							echo '<div class="social-link-block">' . $block->toHtml() . '</div>';
+						}
+					}
+				?>
+			</div>
+		</div>
+		<div class="header-main">
+			<div class="container">	
+				<div class="header-main-wrapper">
+					<?php echo $this->getChildHtml("logo"); ?>
+					<div class="menu-wrapper">
+						<span data-action="toggle-nav" class="action nav-toggle"><span></span></span>
+						<?php echo $this->getChildHtml("navigation.sections"); ?>
+						<div class="search-area">
+						    <a href="javascript:void(0)"><i class="et-icon et-zoom"></i></a>
+							<?php echo $this->getChildHtml("top.search"); ?>
+						</div>
+					</div>
+					<div class="header-right">
+						<ul class="authorization-links">
+				    		<?php echo $this->getChildHtml("authorization-link-login"); ?>
+				    	</ul>
+				    	<a href="<?php echo $_helper->getBaseLinkUrl(). 'wishlist' ?>" class="action my-wishlist" title="My Wish List" role="button"><i class="et-icon et-heart"></i></a>
+				    	<?php echo $this->getChildHtml("minicart"); ?>
+			    	</div>
+			    </div>
+		    </div>
+		</div>
+	<?php endif; ?>
+</header>
+<?php if($notice_block && $notice_block == 'below_header' && $notice_block_id): ?>
+<div class="xstore-notice-block">
+	<?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId($notice_block_id)->toHtml(); ?>
+</div>
+<?php endif; ?>

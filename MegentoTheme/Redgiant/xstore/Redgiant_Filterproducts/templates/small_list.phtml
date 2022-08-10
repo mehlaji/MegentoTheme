@@ -1,0 +1,129 @@
+<?php
+/**
+ * Copyright © 2013-2018 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+use Magento\Framework\App\Action\Action;
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/**
+ * Product list template
+ *
+ * @var $block \Redgiant\Filterproducts\Block\
+ */
+?>
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$_productCollection = $block->getLoadedProductCollection();
+$_helper = $this->helper( 'Magento\Catalog\Helper\Output' );
+$_imagehelper = $this->helper('Magento\Catalog\Helper\Image');
+$_xstorehelper = $this->helper( 'Redgiant\Xstore\Helper\Data' );
+$_dailydealhelper=$this->helper('Redgiant\Dailydeals\Helper\Data');
+
+$_sale_label = $_xstorehelper->getConfig('xstore_settings/catalog/sale_label');
+$_new_label = $_xstorehelper->getConfig('xstore_settings/catalog/new_label');
+$_label_type = $_xstorehelper->getConfig('xstore_settings/catalog/label_type'); 
+
+$_show_review = $this->getData("rating_star");
+if($_show_review == null)
+    $_show_review = $_xstorehelper->getConfig('xstore_settings/catalog/show_review');
+$_review_model = $_xstorehelper->getModel('\Magento\Review\Model\Review');
+
+$_show_percent = $_xstorehelper->getConfig('xstore_settings/catalog/show_percent');
+
+$aspect_ratio = $this->getData("aspect_ratio");
+if($aspect_ratio == null) {
+    $aspect_ratio = 0;
+}
+$image_width = $this->getData("image_width");
+if(!$image_width) {
+    $image_width = 400;
+}
+$image_height = $this->getData("image_height");
+if($aspect_ratio)
+    $image_height = $image_width;
+if(!$image_height) {
+    $image_height = 400;  
+}
+
+$moduleManager = $objectManager->get('\Magento\Framework\Module\Manager');
+?>
+<?php if ( !$_productCollection->count() ): ?>
+    <div class="message info empty">
+        <div><?php echo __('We can\'t find products matching the selection.') ?></div>
+    </div>
+<?php else: ?>
+    <?php
+    $viewMode = 'grid';
+    $image = 'category_page_grid';
+    $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+    $_alternative_img = 'category_page_grid_altimage';
+    $showDescription = 0;
+    ?>
+    <div class="products wrapper <?php echo $viewMode; ?> products-<?php echo $viewMode; ?>">
+        <?php $iterator = 1;?>
+
+        <div class="products list small-list">
+            <?php foreach ( $_productCollection as $_product ): ?>
+                <?php echo($iterator++ == 1) ? '<div class="item product product-item">' : '</div><div class="item product product-item">' ?>
+                
+                <div class="product-item-info" data-container="product-grid">
+                    <?php
+                        $image_type = 'category_page_grid';
+                        if($aspect_ratio)
+                            $productImage = $_imagehelper->init($_product, $image_type)->constrainOnly(FALSE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->resize($image_width);
+                        else
+                            $productImage = $_imagehelper->init($_product, $image_type)->resize($image_width, $image_height);
+                        $productImageUrl = $productImage->getUrl();
+                    ?>
+                    <div class="product-photo-container">
+                        <a href="<?php echo $_product->getProductUrl() ?>" class="product photo product-item-photo" tabindex="-1">
+                            <img class="product-image-photo default-image active" src="<?php echo $productImageUrl; ?>" alt=""/>
+                        </a>
+
+                        <?php if (!$_product->isSaleable()): ?>
+                            <?php if ($_product->isAvailable()): ?>
+                                <div class="stock available"><span><?php echo __('In stock') ?></span></div>
+                            <?php else: ?>
+                                <div class="stock unavailable"><span><?php echo __('Out of stock') ?></span></div>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </div>
+                    <div class="product details product-item-details">
+                        <strong class="product name product-item-name">
+                            <a class="product-item-link"
+                            href="<?php echo $_product->getProductUrl() ?>">
+                                <?php echo $_helper->productAttribute( $_product, $_product->getName(), 'name' ); ?>
+                            </a>
+                        </strong>
+                        <?php
+                            if($_show_review) {
+                                $review_html = $block->getReviewsSummaryHtml( $_product, $templateType );
+
+                                if($review_html)
+                                    echo $review_html;
+                                else {
+                        ?>
+                        <div class="product-reviews-summary short">
+                            <div class="rating-summary">
+                                <span class="label"><span>Rating:</span></span>
+                                <div class="rating-result" title="0%">
+                                    <span style="width:0%"><span>0%</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                                }
+                            }
+                        ?>
+                        <?php echo $block->getProductPrice( $_product ); ?>
+                    </div>
+                </div>
+                <?php echo($iterator == count($_productCollection)+1) ? '</div>' : '' ?>
+            <?php endforeach; ?>
+        </div>
+    </div>
+<?php endif; ?>

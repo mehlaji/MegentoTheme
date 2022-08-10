@@ -1,0 +1,8 @@
+<?php
+    $_helper = $this->helper('Redgiant\Xstore\Helper\Data');
+    $_blockId = $_helper->getConfig( 'xstore_settings/catalog/sidebar_cms_block' );
+    echo $this->getLayout()
+          ->createBlock('Magento\Cms\Block\Block')
+          ->setBlockId($_blockId)
+          ->toHtml();
+?>

@@ -1,0 +1,52 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/**
+ * Language switcher template
+ */
+?>
+
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/**
+ * Language switcher template
+ */
+?>
+<?php
+    $is_demo = 0;
+?>
+<?php if (count($block->getStores())>1 || $is_demo == 1): ?>
+<div class="switcher switcher-language language">
+    <a href="javascript:void(0)" class="switcher-selected"><span><?php echo $block->escapeHtml($block->getStoreName()) ?></span></a>
+    <ul class="switcher-options">
+        <?php foreach ($block->getStores() as $_lang): ?>
+            <?php if ($_lang->getId() != $block->getCurrentStoreId()): ?>
+                <li>
+                    <a href="#" data-post='<?php /* @escapeNotVerified */ echo $block->getTargetStorePostData($_lang); ?>'><span><?php echo $block->escapeHtml($_lang->getName()) ?></span></a>
+                </li>
+            <?php endif; ?>
+        <?php endforeach; ?>
+            <?php if($is_demo == 1 && count($block->getStores())<=1): ?>
+                <li class="view-demo_fr switcher-option">
+                    <a href="javascript:void(0)" data-post="" title="It will be automatically added once you set up more multi store views.">French</a>
+                </li>
+            <?php endif; ?>
+    </ul>
+</div>
+<?php endif; ?>
+

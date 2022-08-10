@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page layout="2columns-left" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="sidebar.main">
+        	<block class="Redgiant\Xstore\Block\Template" name="sidebar_custom_block" after="-" template="Magento_Catalog::category/sidebar_custom_block.phtml"></block>
+        </referenceContainer>
+        <referenceContainer name="content">
+            <block class="Redgiant\Xstore\Block\Template" name="content_bottom_cms_block" template="Magento_Catalog::category/content_bottom_cms_block.phtml"></block>
+        </referenceContainer>
+        <move element="category.view.container" destination="content" before="category.products"/>
+        <move element="content_bottom_cms_block" destination="content" after="category.products"/>
+    </body>
+</page>
